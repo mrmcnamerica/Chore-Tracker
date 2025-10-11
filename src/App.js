@@ -330,12 +330,8 @@ function HistoryPage({ completions, currentUser }) {
 
 function ProfilePage({ user }) {
   const [isEditing, setIsEditing] = useState(false);
-  const [newName, setNewName] = useState('');
+  const [editedProfile, setEditedProfile] = useState(null);
   const [profile, setProfile] = useState(null);
-  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
-
-  const emojiOptions = ['😊', '😎', '🤓', '🥳', '😴', '🤠', '🦸', '🧑‍🚀', '🧙', '🦄', '🐶', '🐱', '🦁', '🐼', '🦊'];
-  const colorOptions = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'];
 
   useEffect(() => {
     loadProfile();
@@ -350,31 +346,23 @@ function ProfilePage({ user }) {
     
     if (data) {
       setProfile(data);
-      setNewName(data.name);
+      setEditedProfile(data);
     }
   };
 
-  const handleSaveName = async () => {
+  const handleSaveProfile = async () => {
     const { error } = await supabase
       .from('profiles')
-      .update({ name: newName })
+      .update({ 
+        name: editedProfile.name,
+        avatar_emoji: editedProfile.avatar_emoji,
+        avatar_color: editedProfile.avatar_color
+      })
       .eq('id', user.id);
 
     if (!error) {
-      setProfile({ ...profile, name: newName });
+      setProfile(editedProfile);
       setIsEditing(false);
-    }
-  };
-
-  const handleSaveAvatar = async (emoji, color) => {
-    const { error } = await supabase
-      .from('profiles')
-      .update({ avatar_emoji: emoji, avatar_color: color })
-      .eq('id', user.id);
-
-    if (!error) {
-      setProfile({ ...profile, avatar_emoji: emoji, avatar_color: color });
-      setShowAvatarPicker(false);
     }
   };
 
@@ -390,88 +378,83 @@ function ProfilePage({ user }) {
         <div 
           className="profile-avatar" 
           style={{ background: profile.avatar_color }}
-          onClick={() => setShowAvatarPicker(true)}
         >
           {profile.avatar_emoji}
         </div>
-        <button onClick={() => setShowAvatarPicker(true)} className="edit-avatar-button">
-          Change Avatar
-        </button>
-
+        
         <div className="profile-info">
-          {isEditing ? (
-            <div className="edit-name-form">
-              <input
-                type="text"
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                className="name-input"
-              />
-              <div className="edit-buttons">
-                <button onClick={handleSaveName} className="save-button">Save</button>
-                <button onClick={() => setIsEditing(false)} className="cancel-button">Cancel</button>
-              </div>
-            </div>
-          ) : (
-            <>
-              <h2>{profile.name}</h2>
-              <button onClick={() => setIsEditing(true)} className="edit-name-button">
-                ✏️ Edit Name
-              </button>
-            </>
-          )}
+          <h2>{profile.name}</h2>
           <p className="profile-email">{user.email}</p>
+          <button onClick={() => setIsEditing(true)} className="edit-profile-button">
+            ✏️ Edit Profile
+          </button>
         </div>
       </div>
 
-      {showAvatarPicker && (
-  <div className="avatar-picker-modal">
-    <div className="avatar-picker">
-      <h3>Customize Your Avatar</h3>
-      <p className="picker-subtitle">Choose an emoji and background color</p>
-      
-      <div className="avatar-preview" style={{ background: profile.avatar_color }}>
-        {profile.avatar_emoji}
-      </div>
+      {isEditing && (
+        <div className="avatar-picker-modal">
+          <div className="avatar-picker">
+            <h3>Edit Profile</h3>
+            <p className="picker-subtitle">Customize your name and avatar</p>
+            
+            <div className="avatar-preview" style={{ background: editedProfile.avatar_color }}>
+              {editedProfile.avatar_emoji}
+            </div>
 
-      <div className="avatar-controls">
-        <label>
-          <span>Emoji</span>
-          <input
-            type="text"
-            value={profile.avatar_emoji}
-            onChange={(e) => setProfile({ ...profile, avatar_emoji: e.target.value.slice(0, 2) })}
-            placeholder="Tap to pick emoji"
-            className="emoji-input"
-            maxLength="2"
-          />
-        </label>
+            <div className="avatar-controls">
+              <label>
+                <span>Name</span>
+                <input
+                  type="text"
+                  value={editedProfile.name}
+                  onChange={(e) => setEditedProfile({ ...editedProfile, name: e.target.value })}
+                  className="name-input"
+                />
+              </label>
 
-        <label>
-          <span>Background Color</span>
-          <input
-            type="color"
-            value={profile.avatar_color}
-            onChange={(e) => setProfile({ ...profile, avatar_color: e.target.value })}
-            className="color-input"
-          />
-        </label>
-      </div>
+              <label>
+                <span>Emoji</span>
+                <input
+                  type="text"
+                  value={editedProfile.avatar_emoji}
+                  onChange={(e) => setEditedProfile({ ...editedProfile, avatar_emoji: e.target.value.slice(0, 2) })}
+                  placeholder="Tap to pick emoji"
+                  className="emoji-input"
+                  maxLength="2"
+                />
+              </label>
 
-      <div className="picker-buttons">
-        <button 
-          onClick={() => handleSaveAvatar(profile.avatar_emoji, profile.avatar_color)} 
-          className="save-button"
-        >
-          Save Avatar
-        </button>
-        <button onClick={() => setShowAvatarPicker(false)} className="cancel-button">
-          Cancel
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+              <label>
+                <span>Background Color</span>
+                <input
+                  type="color"
+                  value={editedProfile.avatar_color}
+                  onChange={(e) => setEditedProfile({ ...editedProfile, avatar_color: e.target.value })}
+                  className="color-input"
+                />
+              </label>
+            </div>
+
+            <div className="picker-buttons">
+              <button 
+                onClick={handleSaveProfile} 
+                className="save-button"
+              >
+                Save Changes
+              </button>
+              <button 
+                onClick={() => {
+                  setIsEditing(false);
+                  setEditedProfile(profile);
+                }} 
+                className="cancel-button"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <button onClick={handleLogout} className="logout-button">
         Logout
