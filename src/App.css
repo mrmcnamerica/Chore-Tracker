@@ -222,6 +222,7 @@ body {
   color: #6b7280;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  margin-top: 24px;        /* ADD THIS */
   margin-bottom: 12px;
   padding: 0 16px;
 }
