@@ -114,8 +114,7 @@ export default function ChoreTrackerApp() {
       <div className="nav-bar">
   {activeTab === 'chores' ? (
     <div className="nav-bar-greeting">
-      <span className="greeting-text">Hi, {userProfile?.name || 'there'}!</span>
-      <h1>Chores</h1>
+      <h1>Hi, {userProfile?.name | | 'there'}!</h1>
     </div>
   ) : (
     <h1>
