@@ -499,3 +499,19 @@ body {
   font-size: 18px;
   color: #6b7280;
 }
+.nav-bar-greeting {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.greeting-text {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 400;
+  margin-bottom: 4px;
+}
+
+.nav-bar h1 {
+  margin: 0;
+}
