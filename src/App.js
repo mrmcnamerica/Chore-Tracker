@@ -112,13 +112,19 @@ export default function ChoreTrackerApp() {
       <div className="status-bar"></div>
       
       <div className="nav-bar">
-        <h1>
-          {activeTab === 'chores' && 'Chores'}
-          {activeTab === 'history' && 'History'}
-          {activeTab === 'profile' && 'Profile'}
-          {activeTab === 'admin' && 'Manage'}
-        </h1>
-      </div>
+  {activeTab === 'chores' ? (
+    <div className="nav-bar-greeting">
+      <span className="greeting-text">Hi, {userProfile?.name || 'there'}!</span>
+      <h1>Chores</h1>
+    </div>
+  ) : (
+    <h1>
+      {activeTab === 'history' && 'History'}
+      {activeTab === 'profile' && 'Profile'}
+      {activeTab === 'admin' && 'Manage'}
+    </h1>
+  )}
+</div>
 
       <div className="content-area">
         {activeTab === 'chores' && (
@@ -325,17 +331,72 @@ function HistoryPage({ completions, currentUser }) {
 }
 
 function ProfilePage({ user }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    loadProfile();
+  }, []);
+
+  const loadProfile = async () => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single();
+    
+    if (data) {
+      setProfile(data);
+      setNewName(data.name);
+    }
+  };
+
+  const handleSaveName = async () => {
+    const { error } = await supabase
+      .from('profiles')
+      .update({ name: newName })
+      .eq('id', user.id);
+
+    if (!error) {
+      setProfile({ ...profile, name: newName });
+      setIsEditing(false);
+    }
+  };
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
   };
 
+  if (!profile) return <div className="loading">Loading...</div>;
+
   return (
     <div className="profile-page">
       <div className="profile-card">
-        <div className="profile-avatar">{user.email[0].toUpperCase()}</div>
+        <div className="profile-avatar">{profile.name[0].toUpperCase()}</div>
         <div className="profile-info">
-          <h2>{user.email}</h2>
-          <p>{user.id}</p>
+          {isEditing ? (
+            <div className="edit-name-form">
+              <input
+                type="text"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                className="name-input"
+              />
+              <div className="edit-buttons">
+                <button onClick={handleSaveName} className="save-button">Save</button>
+                <button onClick={() => setIsEditing(false)} className="cancel-button">Cancel</button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <h2>{profile.name}</h2>
+              <button onClick={() => setIsEditing(true)} className="edit-name-button">
+                ✏️ Edit Name
+              </button>
+            </>
+          )}
+          <p className="profile-email">{user.email}</p>
         </div>
       </div>
 
