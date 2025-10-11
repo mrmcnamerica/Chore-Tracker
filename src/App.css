@@ -408,6 +408,7 @@ body {
   margin-bottom: 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   display: flex;
+  flex-direction: column;  /* Make sure this is column, not row */
   align-items: center;
   gap: 16px;
 }
@@ -604,6 +605,9 @@ body {
 .profile-avatar {
   width: 80px;
   height: 80px;
+  min-width: 80px;
+  min-height: 80px;
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -612,8 +616,8 @@ body {
   cursor: pointer;
   transition: transform 0.2s;
   margin-bottom: 12px;
+  flex-shrink: 0;
 }
-
 .profile-avatar:hover {
   transform: scale(1.05);
 }
