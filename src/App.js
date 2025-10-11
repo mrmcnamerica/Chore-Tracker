@@ -108,18 +108,20 @@ export default function ChoreTrackerApp() {
   }
 
   return (
-   <div className="nav-bar">
-  {activeTab === 'chores' ? (
-    <h1>Hi, {userProfile?.name || 'there'}!</h1>
-  ) : (
-    <h1>
-      {activeTab === 'history' && 'History'}
-      {activeTab === 'profile' && 'Profile'}
-      {activeTab === 'admin' && 'Manage'}
-    </h1>
-  )}
-</div>
-
+  <div className="app-container">
+    <div className="status-bar"></div>
+    
+    <div className="nav-bar">
+      {activeTab === 'chores' ? (
+        <h1>Hi, {userProfile?.name || 'there'}!</h1>
+      ) : (
+        <h1>
+          {activeTab === 'history' && 'History'}
+          {activeTab === 'profile' && 'Profile'}
+          {activeTab === 'admin' && 'Manage'}
+        </h1>
+      )}
+    </div>
       <div className="content-area">
         {activeTab === 'chores' && (
           <ChoresList 
