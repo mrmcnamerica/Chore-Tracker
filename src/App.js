@@ -332,6 +332,10 @@ function ProfilePage({ user }) {
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState('');
   const [profile, setProfile] = useState(null);
+  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
+
+  const emojiOptions = ['😊', '😎', '🤓', '🥳', '😴', '🤠', '🦸', '🧑‍🚀', '🧙', '🦄', '🐶', '🐱', '🦁', '🐼', '🦊'];
+  const colorOptions = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'];
 
   useEffect(() => {
     loadProfile();
@@ -362,6 +366,18 @@ function ProfilePage({ user }) {
     }
   };
 
+  const handleSaveAvatar = async (emoji, color) => {
+    const { error } = await supabase
+      .from('profiles')
+      .update({ avatar_emoji: emoji, avatar_color: color })
+      .eq('id', user.id);
+
+    if (!error) {
+      setProfile({ ...profile, avatar_emoji: emoji, avatar_color: color });
+      setShowAvatarPicker(false);
+    }
+  };
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
   };
@@ -371,7 +387,17 @@ function ProfilePage({ user }) {
   return (
     <div className="profile-page">
       <div className="profile-card">
-        <div className="profile-avatar">{profile.name[0].toUpperCase()}</div>
+        <div 
+          className="profile-avatar" 
+          style={{ background: profile.avatar_color }}
+          onClick={() => setShowAvatarPicker(true)}
+        >
+          {profile.avatar_emoji}
+        </div>
+        <button onClick={() => setShowAvatarPicker(true)} className="edit-avatar-button">
+          Change Avatar
+        </button>
+
         <div className="profile-info">
           {isEditing ? (
             <div className="edit-name-form">
@@ -397,6 +423,55 @@ function ProfilePage({ user }) {
           <p className="profile-email">{user.email}</p>
         </div>
       </div>
+
+      {showAvatarPicker && (
+  <div className="avatar-picker-modal">
+    <div className="avatar-picker">
+      <h3>Customize Your Avatar</h3>
+      <p className="picker-subtitle">Choose an emoji and background color</p>
+      
+      <div className="avatar-preview" style={{ background: profile.avatar_color }}>
+        {profile.avatar_emoji}
+      </div>
+
+      <div className="avatar-controls">
+        <label>
+          <span>Emoji</span>
+          <input
+            type="text"
+            value={profile.avatar_emoji}
+            onChange={(e) => setProfile({ ...profile, avatar_emoji: e.target.value.slice(0, 2) })}
+            placeholder="Tap to pick emoji"
+            className="emoji-input"
+            maxLength="2"
+          />
+        </label>
+
+        <label>
+          <span>Background Color</span>
+          <input
+            type="color"
+            value={profile.avatar_color}
+            onChange={(e) => setProfile({ ...profile, avatar_color: e.target.value })}
+            className="color-input"
+          />
+        </label>
+      </div>
+
+      <div className="picker-buttons">
+        <button 
+          onClick={() => handleSaveAvatar(profile.avatar_emoji, profile.avatar_color)} 
+          className="save-button"
+        >
+          Save Avatar
+        </button>
+        <button onClick={() => setShowAvatarPicker(false)} className="cancel-button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
       <button onClick={handleLogout} className="logout-button">
         Logout
