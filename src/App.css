@@ -48,6 +48,7 @@ body {
   right: 0;
   background: white;
   border-top: 1px solid #e5e7eb;
+  border-radius: 20px 20px 0 0;    /* ADD THIS */
   display: flex;
   justify-content: space-around;
   padding: 8px 0;
