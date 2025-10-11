@@ -439,7 +439,7 @@ function ProfilePage({ user }) {
     </div>
     {showCustomEmoji && (
       <div className="custom-emoji-section">
-        <p className="custom-emoji-label">Type your own emoji:</p>
+        <p className="custom-emoji-label">Choose your own emoji:</p>
         <input
           type="text"
           value={editedProfile.avatar_emoji}
