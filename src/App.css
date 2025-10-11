@@ -741,3 +741,25 @@ body {
   padding: 4px 0;
   margin-top: 8px;
 }
+.emoji-quick-picks {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.quick-emoji-btn {
+  width: 44px;
+  height: 44px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quick-emoji-btn:hover {
+  border-color: #3b82f6;
+  transform: scale(1.1);
+}
