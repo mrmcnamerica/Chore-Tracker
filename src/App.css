@@ -408,9 +408,10 @@ body {
   margin-bottom: 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   display: flex;
-  flex-direction: column;  /* Make sure this is column, not row */
+  flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
+  max-width: 100%;
 }
 
 .profile-avatar {
