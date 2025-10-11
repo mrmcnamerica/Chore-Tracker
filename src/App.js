@@ -231,8 +231,8 @@ function LoginPage() {
     <div className="login-page">
       <div className="login-card">
         <div className="login-header">
-          <div className="login-icon">✅</div>
-          <h1>Chore Tracker</h1>
+          <div className="login-icon">📋</div>
+          <h1>Mac Stack Chores</h1>
           <p>Sign in to get started</p>
         </div>
 
