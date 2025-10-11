@@ -150,26 +150,26 @@ const loadCompletions = async () => {
       </div>
       <div className="tab-bar">
         <TabButton 
-          icon="📋"
-          label="Chores"
-          active={activeTab === 'chores'}
-          onClick={() => setActiveTab('chores')}
-        />
-        <TabButton 
-          icon="⏰"
-          label="History"
-          active={activeTab === 'history'}
-          onClick={() => setActiveTab('history')}
-        />
-        <TabButton 
-          icon="👤"
-          label="Profile"
-          active={activeTab === 'profile'}
-          onClick={() => setActiveTab('profile')}
-        />
-        {userProfile?.role === 'admin' && (
+  icon={<List size={24} />}
+  label="Chores"
+  active={activeTab === 'chores'}
+  onClick={() => setActiveTab('chores')}
+/>
+<TabButton 
+  icon={<Clock size={24} />}
+  label="History"
+  active={activeTab === 'history'}
+  onClick={() => setActiveTab('history')}
+/>
+<TabButton 
+  icon={<User size={24} />}
+  label="Profile"
+  active={activeTab === 'profile'}
+  onClick={() => setActiveTab('profile')}
+/>
+{userProfile?.role === 'admin' && (
   <TabButton 
-    icon="⚙️"
+    icon={<Settings size={24} />}
     label="Manage"
     active={activeTab === 'admin'}
     onClick={() => setActiveTab('admin')}
