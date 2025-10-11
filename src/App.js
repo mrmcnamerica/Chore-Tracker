@@ -9,6 +9,7 @@ export default function ChoreTrackerApp() {
   const [chores, setChores] = useState([]);
   const [completions, setCompletions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userProfile, setUserProfile] = useState(null);
 
   // Check if user is logged in
   useEffect(() => {
@@ -25,12 +26,23 @@ export default function ChoreTrackerApp() {
   }, []);
 
   // Load user profile, chores, and completions
+  
   useEffect(() => {
     if (currentUser) {
+      loadUserProfile();
       loadChores();
       loadCompletions();
     }
   }, [currentUser]);
+  const loadUserProfile = async () => {  // ADD THIS WHOLE FUNCTION
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', currentUser.id)
+    .single();
+  
+  if (data) setUserProfile(data);
+};
 
   const loadChores = async () => {
     const { data, error } = await supabase
@@ -154,12 +166,14 @@ export default function ChoreTrackerApp() {
           active={activeTab === 'profile'}
           onClick={() => setActiveTab('profile')}
         />
-        <TabButton 
-          icon="⚙️"
-          label="Manage"
-          active={activeTab === 'admin'}
-          onClick={() => setActiveTab('admin')}
-        />
+        {userProfile?.role === 'admin' && (
+  <TabButton 
+    icon="⚙️"
+    label="Manage"
+    active={activeTab === 'admin'}
+    onClick={() => setActiveTab('admin')}
+  />
+)}
       </div>
     </div>
   );
