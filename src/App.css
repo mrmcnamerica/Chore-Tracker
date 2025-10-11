@@ -568,3 +568,9 @@ body {
   font-size: 14px;
   margin-top: 4px;
 }
+.history-completed-by {
+  font-size: 13px;
+  color: #3b82f6;
+  font-weight: 600;
+  margin: 2px 0;
+}
