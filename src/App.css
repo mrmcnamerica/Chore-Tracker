@@ -86,10 +86,19 @@ body {
 }
 
 .tab-icon {
+  font-size: 24px;
   margin-bottom: 4px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+
+.tab-button.active .tab-icon {
+  background: rgba(59, 130, 246, 0.1);
 }
 
 .tab-label {

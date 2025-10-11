@@ -149,27 +149,27 @@ const loadCompletions = async () => {
         )}
       </div>
       <div className="tab-bar">
-        <TabButton 
-  icon={<List size={24} />}
+       <TabButton 
+  icon="📋"
   label="Chores"
   active={activeTab === 'chores'}
   onClick={() => setActiveTab('chores')}
 />
 <TabButton 
-  icon={<Clock size={24} />}
+  icon="⏰"
   label="History"
   active={activeTab === 'history'}
   onClick={() => setActiveTab('history')}
 />
 <TabButton 
-  icon={<User size={24} />}
+  icon="👤"
   label="Profile"
   active={activeTab === 'profile'}
   onClick={() => setActiveTab('profile')}
 />
 {userProfile?.role === 'admin' && (
   <TabButton 
-    icon={<Settings size={24} />}
+    icon="⚙️"
     label="Manage"
     active={activeTab === 'admin'}
     onClick={() => setActiveTab('admin')}
