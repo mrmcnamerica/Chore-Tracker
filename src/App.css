@@ -772,3 +772,24 @@ body {
   color: #6b7280;
   margin-bottom: 4px;
 }
+.custom-emoji-btn {
+  background: #f3f4f6 !important;
+  color: #3b82f6;
+  font-size: 20px !important;
+}
+
+.custom-emoji-section {
+  margin-top: 12px;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

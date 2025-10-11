@@ -332,6 +332,7 @@ function ProfilePage({ user }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedProfile, setEditedProfile] = useState(null);
   const [profile, setProfile] = useState(null);
+  const [showCustomEmoji, setShowCustomEmoji] = useState(false);
 
   useEffect(() => {
     loadProfile();
@@ -413,31 +414,43 @@ function ProfilePage({ user }) {
               </label>
 
 <label>
-  <span>Emoji</span>
-  <div className="emoji-quick-picks">
-    {['😎', '🤓', '🥳', '👸', '👽', '🤖', '💩', '🦸', '🧑‍🚀', '🐶', '🐱'].map(emoji => (
+    <span>Emoji</span>
+    <div className="emoji-quick-picks">
+      {['😎', '🤓', '🥳', '👸', '👽', '🤖', '💩', '🦸', '🧑‍🚀', '🐶', '🐱'].map(emoji => (
+        <button
+          key={emoji}
+          type="button"
+          onClick={() => {
+            setEditedProfile({ ...editedProfile, avatar_emoji: emoji });
+            setShowCustomEmoji(false);
+          }}
+          className="quick-emoji-btn"
+        >
+          {emoji}
+        </button>
+      ))}
       <button
-        key={emoji}
         type="button"
-        onClick={() => setEditedProfile({ ...editedProfile, avatar_emoji: emoji })}
-        className="quick-emoji-btn"
+        onClick={() => setShowCustomEmoji(!showCustomEmoji)}
+        className="quick-emoji-btn custom-emoji-btn"
       >
-        {emoji}
+        ➕
       </button>
-    ))}
-  </div>
-  <div className="custom-emoji-section">
-    <p className="custom-emoji-label">Or pick your own:</p>
-    <input
-      type="text"
-      value={editedProfile.avatar_emoji}
-      onChange={(e) => setEditedProfile({ ...editedProfile, avatar_emoji: e.target.value.slice(0, 2) })}
-      placeholder="Tap to type"
-      className="emoji-input"
-      maxLength="2"
-    />
-  </div>
-</label>
+    </div>
+    {showCustomEmoji && (
+      <div className="custom-emoji-section">
+        <p className="custom-emoji-label">Type your own emoji:</p>
+        <input
+          type="text"
+          value={editedProfile.avatar_emoji}
+          onChange={(e) => setEditedProfile({ ...editedProfile, avatar_emoji: e.target.value.slice(0, 2) })}
+          placeholder="Tap to type"
+          className="emoji-input"
+          maxLength="2"
+        />
+      </div>
+    )}
+  </label>
 
               <label>
                 <span>Background Color</span>
