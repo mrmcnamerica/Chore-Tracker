@@ -412,10 +412,10 @@ function ProfilePage({ user }) {
                 />
               </label>
 
-              <label>
+<label>
   <span>Emoji</span>
   <div className="emoji-quick-picks">
-    {['😊', '😎', '🤓', '🥳', '🦸', '🧑‍🚀', '🐶', '🐱'].map(emoji => (
+    {['😎', '🤓', '🥳', '👸', '👽', '🤖', '💩', '🦸', '🧑‍🚀', '🐶', '🐱'].map(emoji => (
       <button
         key={emoji}
         type="button"
@@ -426,14 +426,17 @@ function ProfilePage({ user }) {
       </button>
     ))}
   </div>
-  <input
-    type="text"
-    value={editedProfile.avatar_emoji}
-    onChange={(e) => setEditedProfile({ ...editedProfile, avatar_emoji: e.target.value.slice(0, 2) })}
-    placeholder="Or type your own"
-    className="emoji-input"
-    maxLength="2"
-  />
+  <div className="custom-emoji-section">
+    <p className="custom-emoji-label">Or pick your own:</p>
+    <input
+      type="text"
+      value={editedProfile.avatar_emoji}
+      onChange={(e) => setEditedProfile({ ...editedProfile, avatar_emoji: e.target.value.slice(0, 2) })}
+      placeholder="Tap to type"
+      className="emoji-input"
+      maxLength="2"
+    />
+  </div>
 </label>
 
               <label>
