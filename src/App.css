@@ -675,8 +675,7 @@ body {
 .avatar-preview {
   width: 100px;
   height: 100px;
-  min-width: 100px;
-  min-height: 100px;
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -684,6 +683,7 @@ body {
   font-size: 50px;
   margin: 20px auto;
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 .avatar-controls {
