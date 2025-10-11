@@ -13,17 +13,34 @@ export default function ChoreTrackerApp() {
 
   // Check if user is logged in
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+  // Set a timeout in case auth hangs
+  const timeout = setTimeout(() => {
+    console.log('Auth timeout, proceeding anyway');
+    setLoading(false);
+  }, 5000); // 5 second timeout
+
+  supabase.auth.getSession()
+    .then(({ data: { session }, error }) => {
+      if (error) console.error('Auth error:', error);
       setCurrentUser(session?.user ?? null);
       setLoading(false);
+      clearTimeout(timeout);
+    })
+    .catch((err) => {
+      console.error('Auth failed:', err);
+      setLoading(false);
+      clearTimeout(timeout);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setCurrentUser(session?.user ?? null);
-    });
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    setCurrentUser(session?.user ?? null);
+  });
 
-    return () => subscription.unsubscribe();
-  }, []);
+  return () => {
+    subscription.unsubscribe();
+    clearTimeout(timeout);
+  };
+}, []);
 
   // Load user profile, chores, and completions
   
