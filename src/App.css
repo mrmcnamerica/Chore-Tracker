@@ -64,11 +64,25 @@ body {
   border: none;
   cursor: pointer;
   color: #9ca3af;
-  transition: color 0.2s;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
 .tab-button.active {
   color: #3b82f6;
+}
+
+.tab-button.active::before {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 32px;
+  background: rgba(59, 130, 246, 0.15);
+  border-radius: 16px;
+  z-index: -1;
 }
 
 .tab-icon {
