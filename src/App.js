@@ -294,36 +294,37 @@ function HistoryPage({ completions, currentUser }) {
   const totalEarnings = completions.reduce((sum, c) => sum + c.amount_earned, 0);
 
   return (
-   return (
-  <div className="history-page">
-    <div className="earnings-card">
-      {/* earnings display */}
-    </div>
-
-    <h2 className="section-title">Recent Activity</h2>
-
-    {completions.length === 0 ? (
-      <div className="empty-state">
-        {/* empty state */}
+    <div className="history-page">
+      <div className="earnings-card">
+        <p className="earnings-label">Total Earnings</p>
+        <p className="earnings-amount">${totalEarnings.toFixed(2)}</p>
+        <p className="earnings-count">{completions.length} chores completed</p>
       </div>
-    ) : (
-      completions.map(completion => (
-        <div key={completion.id} className="history-card">
-          <div className="history-info">
-            <h3>{completion.chores?.name}</h3>
-            <p className="history-completed-by">
-              Completed by {completion.profiles?.name || 'Unknown'}
-            </p>
-            <p className="history-date">
-              {new Date(completion.completed_at).toLocaleString()}
-            </p>
-          </div>
-          <div className="history-amount">+${completion.amount_earned.toFixed(2)}</div>
+
+      <h2 className="section-title">Recent Activity</h2>
+
+      {completions.length === 0 ? (
+        <div className="empty-state">
+          <p>No chores completed yet</p>
+          <p className="empty-subtitle">Complete a chore to start earning!</p>
         </div>
-      ))
-    )}
-  </div>
-);
+      ) : (
+        completions.map(completion => (
+          <div key={completion.id} className="history-card">
+            <div className="history-info">
+              <h3>{completion.chores?.name}</h3>
+              <p className="history-completed-by">
+                Completed by {completion.profiles?.name || 'Unknown'}
+              </p>
+              <p className="history-date">
+                {new Date(completion.completed_at).toLocaleString()}
+              </p>
+            </div>
+            <div className="history-amount">+${completion.amount_earned.toFixed(2)}</div>
+          </div>
+        ))
+      )}
+    </div>
   );
 }
 
