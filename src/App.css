@@ -76,7 +76,7 @@ body {
 .tab-button.active::after {
   content: '';
   position: absolute;
-  bottom: 0;
+  bottom: -4px;           /* Move it down a bit */
   left: 50%;
   transform: translateX(-50%);
   width: 40px;
