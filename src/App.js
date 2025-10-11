@@ -108,14 +108,9 @@ export default function ChoreTrackerApp() {
   }
 
   return (
-    <div className="app-container">
-      <div className="status-bar"></div>
-      
-      <div className="nav-bar">
+   <div className="nav-bar">
   {activeTab === 'chores' ? (
-    <div className="nav-bar-greeting">
-      <h1>Hi, {userProfile?.name | | 'there'}!</h1>
-    </div>
+    <h1>Hi, {userProfile?.name || 'there'}!</h1>
   ) : (
     <h1>
       {activeTab === 'history' && 'History'}
