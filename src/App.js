@@ -681,81 +681,8 @@ function AdminPanel({ chores, onAddChore, onDeleteChore }) {
               </button>
             </div>
           </div>
-        ))}
+))}
       </div>
     </div>
   );
 }
-  return (
-    <div className="admin-panel">
-      <button onClick={() => setShowForm(!showForm)} className="primary-button">
-        ➕ Add New Chore
-      </button>
-
-      {showForm && (
-        <div className="chore-form">
-          <input
-            type="text"
-            placeholder="Chore name"
-            value={newChore.name}
-            onChange={(e) => setNewChore({...newChore, name: e.target.value})}
-          />
-          <input
-            type="text"
-            placeholder="Description (optional)"
-            value={newChore.description}
-            onChange={(e) => setNewChore({...newChore, description: e.target.value})}
-          />
-          <input
-            type="number"
-            step="0.01"
-            placeholder="Value ($)"
-            value={newChore.value}
-            onChange={(e) => setNewChore({...newChore, value: e.target.value})}
-          />
-          
-          <label className="checkbox-label">
-            <input
-              type="checkbox"
-              checked={newChore.is_recurring}
-              onChange={(e) => setNewChore({...newChore, is_recurring: e.target.checked})}
-            />
-            <span>Recurring (resets weekly)</span>
-          </label>
-          
-          <label className="checkbox-label">
-            <input
-              type="checkbox"
-              checked={newChore.can_repeat}
-              onChange={(e) => setNewChore({...newChore, can_repeat: e.target.checked})}
-            />
-            <span>Can be done multiple times</span>
-          </label>
-
-          <div className="form-buttons">
-            <button onClick={handleSubmit} className="primary-button">Add</button>
-            <button onClick={() => setShowForm(false)} className="secondary-button">Cancel</button>
-          </div>
-        </div>
-      )}
-
-      <h2 className="section-title">All Chores</h2>
-
-      {chores.map(chore => (
-        <div key={chore.id} className="chore-card">
-          <div className="chore-info">
-            <h3>{chore.name}</h3>
-            {chore.description && <p className="chore-description">{chore.description}</p>}
-            <div className="chore-meta">
-              <span className="chore-value">${chore.value.toFixed(2)}</span>
-              {chore.can_repeat && <span className="badge">Repeatable</span>}
-              {chore.is_recurring && <span className="badge badge-purple">Weekly</span>}
-            </div>
-          </div>
-          <button onClick={() => onDeleteChore(chore.id)} className="delete-button">
-            🗑️
-          </button>
-        </div>
-      ))}
-    </div>
-  );
