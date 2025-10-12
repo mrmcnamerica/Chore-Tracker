@@ -100,6 +100,16 @@ const loadCompletions = async () => {
       loadCompletions();
     }
   };
+  const deleteCompletion = async (completionId) => {
+  const { error } = await supabase
+    .from('completions')
+    .delete()
+    .eq('id', completionId);
+
+  if (!error) {
+    loadCompletions(); // Reload to show updated list
+  }
+};
 
   const addChore = async (chore) => {
     const { data, error } = await supabase
@@ -158,6 +168,8 @@ const loadCompletions = async () => {
   <HistoryPage 
     completions={completions}
     currentUser={currentUser}
+    userProfile={userProfile}
+    onDeleteCompletion={deleteCompletion}
   />
 )}
         {activeTab === 'profile' && (
@@ -313,8 +325,7 @@ function ChoresList({ chores, completions, onComplete, currentUser }) {
   );
 }
 
-function HistoryPage({ completions, currentUser }) {
-  // Only count current user's earnings for the card
+function HistoryPage({ completions, currentUser, userProfile, onDeleteCompletion }) {
   const myEarnings = completions
     .filter(c => c.user_id === currentUser.id)
     .reduce((sum, c) => sum + c.amount_earned, 0);
@@ -328,7 +339,6 @@ function HistoryPage({ completions, currentUser }) {
           {completions.filter(c => c.user_id === currentUser.id).length} chores completed
         </p>
       </div>
-      {/* rest stays the same */}
 
       <h2 className="section-title">Recent Activity</h2>
 
@@ -340,23 +350,36 @@ function HistoryPage({ completions, currentUser }) {
       ) : (
         completions.map(completion => (
           <div key={completion.id} className="history-card">
-  <div 
-    className="history-avatar" 
-    style={{ background: completion.profiles?.avatar_color || '#3b82f6' }}
-  >
-    {completion.profiles?.avatar_emoji || '😊'}
-  </div>
-  <div className="history-info">
-    <h3>{completion.chores?.name}</h3>
-    <p className="history-completed-by">
-      {completion.profiles?.name || 'Unknown'}
-    </p>
-    <p className="history-date">
-      {new Date(completion.completed_at).toLocaleString()}
-    </p>
-  </div>
-  <div className="history-amount">+${completion.amount_earned.toFixed(2)}</div>
-</div>
+            <div 
+              className="history-avatar" 
+              style={{ background: completion.profiles?.avatar_color || '#3b82f6' }}
+            >
+              {completion.profiles?.avatar_emoji || '😊'}
+            </div>
+            <div className="history-info">
+              <h3>{completion.chores?.name}</h3>
+              <p className="history-completed-by">
+                {completion.profiles?.name || 'Unknown'}
+              </p>
+              <p className="history-date">
+                {new Date(completion.completed_at).toLocaleString()}
+              </p>
+            </div>
+            <div className="history-amount">+${completion.amount_earned.toFixed(2)}</div>
+            
+            {userProfile?.role === 'admin' && (
+              <button
+                onClick={() => {
+                  if (window.confirm('Delete this completion? This cannot be undone.')) {
+                    onDeleteCompletion(completion.id);
+                  }
+                }}
+                className="delete-completion-button"
+              >
+                🗑️
+              </button>
+            )}
+          </div>
         ))
       )}
     </div>
