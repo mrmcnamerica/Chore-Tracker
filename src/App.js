@@ -149,11 +149,11 @@ const loadCompletions = async () => {
           />
         )}
         {activeTab === 'history' && (
-          <HistoryPage 
-            completions={completions.filter(c => c.user_id === currentUser.id)}
-            currentUser={currentUser}
-          />
-        )}
+  <HistoryPage 
+    completions={completions}
+    currentUser={currentUser}
+  />
+)}
         {activeTab === 'profile' && (
           <ProfilePage user={currentUser} />
         )}
@@ -308,15 +308,21 @@ function ChoresList({ chores, completions, onComplete, currentUser }) {
 }
 
 function HistoryPage({ completions, currentUser }) {
-  const totalEarnings = completions.reduce((sum, c) => sum + c.amount_earned, 0);
+  // Only count current user's earnings for the card
+  const myEarnings = completions
+    .filter(c => c.user_id === currentUser.id)
+    .reduce((sum, c) => sum + c.amount_earned, 0);
 
   return (
     <div className="history-page">
       <div className="earnings-card">
-        <p className="earnings-label">Total Earnings</p>
-        <p className="earnings-amount">${totalEarnings.toFixed(2)}</p>
-        <p className="earnings-count">{completions.length} chores completed</p>
+        <p className="earnings-label">My Total Earnings</p>
+        <p className="earnings-amount">${myEarnings.toFixed(2)}</p>
+        <p className="earnings-count">
+          {completions.filter(c => c.user_id === currentUser.id).length} chores completed
+        </p>
       </div>
+      {/* rest stays the same */}
 
       <h2 className="section-title">Recent Activity</h2>
 
