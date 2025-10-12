@@ -73,7 +73,7 @@ export default function ChoreTrackerApp() {
 const loadCompletions = async () => {
   const { data, error } = await supabase
     .from('completions')
-    .select('*, chores(name), profiles(name)')
+    .select('*, chores(name), profiles(name, avatar_emoji, avatar_color)')
     .order('completed_at', { ascending: false });
   
   if (data) setCompletions(data);
@@ -334,17 +334,23 @@ function HistoryPage({ completions, currentUser }) {
       ) : (
         completions.map(completion => (
           <div key={completion.id} className="history-card">
-            <div className="history-info">
-              <h3>{completion.chores?.name}</h3>
-              <p className="history-completed-by">
-                Completed by {completion.profiles?.name || 'Unknown'}
-              </p>
-              <p className="history-date">
-                {new Date(completion.completed_at).toLocaleString()}
-              </p>
-            </div>
-            <div className="history-amount">+${completion.amount_earned.toFixed(2)}</div>
-          </div>
+  <div 
+    className="history-avatar" 
+    style={{ background: completion.profiles?.avatar_color || '#3b82f6' }}
+  >
+    {completion.profiles?.avatar_emoji || '😊'}
+  </div>
+  <div className="history-info">
+    <h3>{completion.chores?.name}</h3>
+    <p className="history-completed-by">
+      {completion.profiles?.name || 'Unknown'}
+    </p>
+    <p className="history-date">
+      {new Date(completion.completed_at).toLocaleString()}
+    </p>
+  </div>
+  <div className="history-amount">+${completion.amount_earned.toFixed(2)}</div>
+</div>
         ))
       )}
     </div>
