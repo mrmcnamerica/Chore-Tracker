@@ -284,6 +284,8 @@ function LoginPage() {
 }
 
 function ChoresList({ chores, completions, onComplete, currentUser }) {
+  const [completingId, setCompletingId] = useState(null);
+
   const getChoreStatus = (chore) => {
     const recentCompletions = completions.filter(c => c.chore_id === chore.id);
     if (!chore.can_repeat && recentCompletions.length > 0) {
@@ -291,6 +293,16 @@ function ChoresList({ chores, completions, onComplete, currentUser }) {
     }
     return 'available';
   };
+
+  const handleComplete = (chore) => {
+    setCompletingId(chore.id);
+    
+    setTimeout(() => {
+      onComplete(chore);
+      setCompletingId(null);
+    }, 400);
+  };
+
 
   return (
     <div className="chores-list">
@@ -312,12 +324,18 @@ function ChoresList({ chores, completions, onComplete, currentUser }) {
             </div>
             
             <button
-              onClick={() => onComplete(chore)}
-              disabled={isCompleted}
-              className={`complete-button ${isCompleted ? 'disabled' : ''}`}
-            >
-              {isCompleted ? 'Done' : 'Complete'}
-            </button>
+  onClick={() => handleComplete(chore)}
+  disabled={isCompleted || completingId === chore.id}
+  className={`complete-button ${
+    isCompleted 
+      ? 'disabled' 
+      : completingId === chore.id
+      ? 'completing'
+      : ''
+  }`}
+>
+  {isCompleted ? 'Done' : 'Complete'}
+</button>
           </div>
         );
       })}
@@ -769,7 +787,7 @@ reset_day: choreForm.reset_day,
               </button>
             </div>
           </div>
-))}
+        ))}
       </div>
     </div>
   );
