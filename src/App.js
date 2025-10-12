@@ -625,7 +625,7 @@ reset_day: choreForm.reset_day,
             onChange={(e) => setChoreForm({...choreForm, value: e.target.value})}
           />
 
-          <label className="form-label">
+          <label className="checkbox-label">
             <input
               type="checkbox"
               checked={choreForm.is_recurring}
