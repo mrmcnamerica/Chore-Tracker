@@ -909,8 +909,8 @@ body {
 }
 /* Time Filter */
 .time-filter {
-  padding: 16px;
-  text-align: left;  /* Changed from center */
+  padding: 16px 16px 16px 20px;  /* Match the 20px left padding of cards */
+  text-align: left;
 }
 
 /* Time Filter */
