@@ -1009,12 +1009,26 @@ body {
   display: flex;
   gap: 16px;
   padding: 0 16px 24px;
-  overflow-x: auto;
+  overflow-x: scroll;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
   justify-content: center;
 }
+/* Hide scrollbar for Chrome/Safari */
+.overview-carousel::-webkit-scrollbar,
+.user-carousel::-webkit-scrollbar {
+  display: none;
+}
 
+/* Make cards take full width */
+.summary-card,
+.user-earnings-card {
+  min-width: calc(100vw - 56px); /* Full width minus padding and gap */
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
 .user-earnings-card {
   min-width: 280px;        /* Changed from 160px to match summary cards */
   max-width: 280px;        /* Changed from 160px */

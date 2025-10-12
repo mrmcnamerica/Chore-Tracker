@@ -354,20 +354,20 @@ function HistoryPage({ completions, currentUser, userProfile, onDeleteCompletion
   const userRef = useRef(null);
 
   const handleOverviewScroll = () => {
-    if (!overviewRef.current) return;
-    const scrollLeft = overviewRef.current.scrollLeft;
-    const cardWidth = 296;
-    const index = Math.round(scrollLeft / cardWidth);
-    setOverviewIndex(index);
-  };
+  if (!overviewRef.current) return;
+  const scrollLeft = overviewRef.current.scrollLeft;
+  const cardWidth = overviewRef.current.scrollWidth / 2; // 2 cards total
+  const index = Math.round(scrollLeft / cardWidth);
+  setOverviewIndex(index);
+};
 
-  const handleUserScroll = () => {
-    if (!userRef.current) return;
-    const scrollLeft = userRef.current.scrollLeft;
-    const cardWidth = 296;
-    const index = Math.round(scrollLeft / cardWidth);
-    setUserIndex(index);
-  };
+const handleUserScroll = () => {
+  if (!userRef.current) return;
+  const scrollLeft = userRef.current.scrollLeft;
+  const cardWidth = userRef.current.scrollWidth / allProfiles.length;
+  const index = Math.round(scrollLeft / cardWidth);
+  setUserIndex(index);
+};
 
     // ... rest of your existing code continues here
   useEffect(() => {
