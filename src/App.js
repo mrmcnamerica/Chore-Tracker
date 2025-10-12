@@ -333,7 +333,9 @@ function ChoresList({ chores, completions, onComplete, currentUser }) {
       : ''
   }`}
 >
-  {completingId === chore.id ? '✓' : isCompleted ? 'Done' : 'Complete'}
+  {completingId === chore.id ? (
+    <span style={{ fontSize: '16px' }}>✓</span>
+  ) : isCompleted ? 'Done' : 'Complete'}
 </button>
           </div>
         );
