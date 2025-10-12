@@ -345,48 +345,143 @@ function ChoresList({ chores, completions, onComplete, currentUser }) {
 }
 
 function HistoryPage({ completions, currentUser, userProfile, onDeleteCompletion }) {
-  const myEarnings = completions
-    .filter(c => c.user_id === currentUser.id)
-    .reduce((sum, c) => sum + c.amount_earned, 0);
+  const [timeFilter, setTimeFilter] = useState('week'); // 'today', 'week', 'month', 'all'
 
-  return (
-    <div className="history-page">
-      <div className="earnings-card">
-        <p className="earnings-label">My Total Earnings</p>
-        <p className="earnings-amount">${myEarnings.toFixed(2)}</p>
-        <p className="earnings-count">
-          {completions.filter(c => c.user_id === currentUser.id).length} chores completed
-        </p>
-      </div>
+  // Filter completions by time period
+  const getFilteredCompletions = () => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
 
-      <h2 className="section-title">Recent Activity</h2>
+    return completions.filter(c => {
+      const completedDate = new Date(c.completed_at);
+      if (timeFilter === 'today') return completedDate >= today;
+      if (timeFilter === 'week') return completedDate >= weekAgo;
+      if (timeFilter === 'month') return completedDate >= monthAgo;
+      return true; // 'all'
+    });
+  };
 
-      {completions.length === 0 ? (
-        <div className="empty-state">
-          <p>No chores completed yet</p>
-          <p className="empty-subtitle">Complete a chore to start earning!</p>
+  const filteredCompletions = getFilteredCompletions();
+
+  // Calculate user earnings
+  const getUserEarnings = (userId) => {
+    return filteredCompletions
+      .filter(c => c.user_id === userId)
+      .reduce((sum, c) => sum + c.amount_earned, 0);
+  };
+
+  // Get all unique users who have completed chores
+  const getUniqueUsers = () => {
+    const userMap = new Map();
+    filteredCompletions.forEach(c => {
+      if (c.profiles && !userMap.has(c.user_id)) {
+        userMap.set(c.user_id, {
+          id: c.user_id,
+          name: c.profiles.name,
+          avatar_emoji: c.profiles.avatar_emoji,
+          avatar_color: c.profiles.avatar_color
+        });
+      }
+    });
+    return Array.from(userMap.values());
+  };
+
+  const allUsers = getUniqueUsers();
+  const myEarnings = getUserEarnings(currentUser.id);
+  const totalPaidOut = filteredCompletions.reduce((sum, c) => sum + c.amount_earned, 0);
+
+  if (userProfile?.role === 'admin') {
+    return (
+      <div className="history-page">
+        {/* Time Filter */}
+        <div className="time-filter">
+          <select 
+            value={timeFilter} 
+            onChange={(e) => setTimeFilter(e.target.value)}
+            className="time-filter-select"
+          >
+            <option value="today">Today</option>
+            <option value="week">This Week</option>
+            <option value="month">This Month</option>
+            <option value="all">All Time</option>
+          </select>
         </div>
-      ) : (
-        completions.map(completion => (
-          <div key={completion.id} className="history-card">
-            <div 
-              className="history-avatar" 
-              style={{ background: completion.profiles?.avatar_color || '#3b82f6' }}
-            >
-              {completion.profiles?.avatar_emoji || '😊'}
+
+        {/* Top Carousel - Summary Cards */}
+        <h2 className="section-title">Overview</h2>
+        <div className="overview-carousel">
+          <div className="summary-card">
+            <div className="summary-icon">🏠</div>
+            <h3>Family Summary</h3>
+            <div className="summary-stats">
+              <p>{allUsers.length} active members</p>
+              <p>{filteredCompletions.length} chores completed</p>
+              <p className="summary-amount">${totalPaidOut.toFixed(2)} earned</p>
             </div>
-            <div className="history-info">
-              <h3>{completion.chores?.name}</h3>
-              <p className="history-completed-by">
-                {completion.profiles?.name || 'Unknown'}
-              </p>
-              <p className="history-date">
-                {new Date(completion.completed_at).toLocaleString()}
-              </p>
+          </div>
+
+          <div className="summary-card payout-card">
+            <div className="summary-icon">💵</div>
+            <h3>Pending Payouts</h3>
+            <div className="summary-stats">
+              <p className="summary-amount">${totalPaidOut.toFixed(2)}</p>
+              <p className="summary-label">Total unpaid</p>
+              <button className="mark-paid-button">Mark as Paid</button>
             </div>
-            <div className="history-amount">+${completion.amount_earned.toFixed(2)}</div>
+          </div>
+        </div>
+
+        {/* Bottom Carousel - User Cards */}
+        <h2 className="section-title">Individual Earnings</h2>
+        <div className="user-carousel">
+          {allUsers.map(user => {
+            const earnings = getUserEarnings(user.id);
+            const choresCount = filteredCompletions.filter(c => c.user_id === user.id).length;
             
-            {userProfile?.role === 'admin' && (
+            return (
+              <div key={user.id} className="user-earnings-card">
+                <div 
+                  className="user-card-avatar"
+                  style={{ background: user.avatar_color || '#3b82f6' }}
+                >
+                  {user.avatar_emoji || '😊'}
+                </div>
+                <h3>{user.name}</h3>
+                <p className="user-earnings">${earnings.toFixed(2)}</p>
+                <p className="user-chores">{choresCount} completed</p>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Recent Activity */}
+        <h2 className="section-title">Recent Activity</h2>
+        {filteredCompletions.length === 0 ? (
+          <div className="empty-state">
+            <p>No chores completed in this time period</p>
+          </div>
+        ) : (
+          filteredCompletions.map(completion => (
+            <div key={completion.id} className="history-card">
+              <div 
+                className="history-avatar" 
+                style={{ background: completion.profiles?.avatar_color || '#3b82f6' }}
+              >
+                {completion.profiles?.avatar_emoji || '😊'}
+              </div>
+              <div className="history-info">
+                <h3>{completion.chores?.name}</h3>
+                <p className="history-completed-by">
+                  {completion.profiles?.name || 'Unknown'}
+                </p>
+                <p className="history-date">
+                  {new Date(completion.completed_at).toLocaleString()}
+                </p>
+              </div>
+              <div className="history-amount">+${completion.amount_earned.toFixed(2)}</div>
+              
               <button
                 onClick={() => {
                   if (window.confirm('Delete this completion? This cannot be undone.')) {
@@ -397,9 +492,54 @@ function HistoryPage({ completions, currentUser, userProfile, onDeleteCompletion
               >
                 🗑️
               </button>
-            )}
-          </div>
-        ))
+            </div>
+          ))
+        )}
+      </div>
+    );
+  }
+
+  // Regular user view (existing code)
+  return (
+    <div className="history-page">
+      <div className="earnings-card">
+        <p className="earnings-label">My Total Earnings</p>
+        <p className="earnings-amount">${myEarnings.toFixed(2)}</p>
+        <p className="earnings-count">
+          {filteredCompletions.filter(c => c.user_id === currentUser.id).length} chores completed
+        </p>
+      </div>
+
+      <h2 className="section-title">Recent Activity</h2>
+
+      {filteredCompletions.filter(c => c.user_id === currentUser.id).length === 0 ? (
+        <div className="empty-state">
+          <p>No chores completed yet</p>
+          <p className="empty-subtitle">Complete a chore to start earning!</p>
+        </div>
+      ) : (
+        filteredCompletions
+          .filter(c => c.user_id === currentUser.id)
+          .map(completion => (
+            <div key={completion.id} className="history-card">
+              <div 
+                className="history-avatar" 
+                style={{ background: completion.profiles?.avatar_color || '#3b82f6' }}
+              >
+                {completion.profiles?.avatar_emoji || '😊'}
+              </div>
+              <div className="history-info">
+                <h3>{completion.chores?.name}</h3>
+                <p className="history-completed-by">
+                  {completion.profiles?.name || 'Unknown'}
+                </p>
+                <p className="history-date">
+                  {new Date(completion.completed_at).toLocaleString()}
+                </p>
+              </div>
+              <div className="history-amount">+${completion.amount_earned.toFixed(2)}</div>
+            </div>
+          ))
       )}
     </div>
   );
