@@ -523,13 +523,14 @@ function ProfilePage({ user }) {
 function AdminPanel({ chores, onAddChore, onDeleteChore }) {
   const [showForm, setShowForm] = useState(false);
   const [editingChore, setEditingChore] = useState(null);
-  const [choreForm, setChoreForm] = useState({
-    name: '',
-    description: '',
-    value: '',
-    is_recurring: true,
-    can_repeat: false
-  });
+const [choreForm, setChoreForm] = useState({
+  name: '',
+  description: '',
+  value: '',
+  is_recurring: true,
+  can_repeat: false,
+  reset_day: 1  // Default to Monday
+});
 
   const resetForm = () => {
     setChoreForm({
@@ -537,7 +538,8 @@ function AdminPanel({ chores, onAddChore, onDeleteChore }) {
       description: '',
       value: '',
       is_recurring: true,
-      can_repeat: false
+      can_repeat: false,
+      reset_day: 1
     });
     setShowForm(false);
     setEditingChore(null);
@@ -554,7 +556,8 @@ function AdminPanel({ chores, onAddChore, onDeleteChore }) {
             description: choreForm.description,
             value: parseFloat(choreForm.value),
             is_recurring: choreForm.is_recurring,
-            can_repeat: choreForm.can_repeat
+can_repeat: choreForm.can_repeat,
+reset_day: choreForm.reset_day
           })
           .eq('id', editingChore.id);
 
@@ -580,7 +583,8 @@ function AdminPanel({ chores, onAddChore, onDeleteChore }) {
       description: chore.description || '',
       value: chore.value.toString(),
       is_recurring: chore.is_recurring,
-      can_repeat: chore.can_repeat
+      can_repeat: chore.can_repeat,
+      reset_day: chore.reset_day || 1
     });
     setShowForm(true);
   };
@@ -625,6 +629,42 @@ function AdminPanel({ chores, onAddChore, onDeleteChore }) {
             />
             <span>Recurring (resets weekly)</span>
           </label>
+          <label className="checkbox-label">
+  <input
+    type="checkbox"
+    checked={choreForm.is_recurring}
+    onChange={(e) => setChoreForm({...choreForm, is_recurring: e.target.checked})}
+  />
+  <span>Recurring (resets weekly)</span>
+</label>
+
+{choreForm.is_recurring && (
+  <label className="checkbox-label">
+    <span>Resets every:</span>
+    <select
+      value={choreForm.reset_day || 1}
+      onChange={(e) => setChoreForm({...choreForm, reset_day: parseInt(e.target.value)})}
+      className="reset-day-select"
+    >
+      <option value="0">Sunday</option>
+      <option value="1">Monday</option>
+      <option value="2">Tuesday</option>
+      <option value="3">Wednesday</option>
+      <option value="4">Thursday</option>
+      <option value="5">Friday</option>
+      <option value="6">Saturday</option>
+    </select>
+  </label>
+)}
+
+<label className="checkbox-label">
+  <input
+    type="checkbox"
+    checked={choreForm.can_repeat}
+    onChange={(e) => setChoreForm({...choreForm, can_repeat: e.target.checked})}
+  />
+  <span>Can be done multiple times</span>
+</label>
           
           <label className="checkbox-label">
             <input
