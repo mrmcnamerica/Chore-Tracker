@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from './supabaseClient';
 import { CheckCircle, Clock, DollarSign, User, Settings, Plus, Trash2, List } from 'lucide-react';
 import './App.css';
@@ -345,8 +345,31 @@ function ChoresList({ chores, completions, onComplete, currentUser }) {
 }
 
 function HistoryPage({ completions, currentUser, userProfile, onDeleteCompletion }) {
-  const [timeFilter, setTimeFilter] = useState('week'); // 'today', 'week', 'month', 'all'
+  const [timeFilter, setTimeFilter] = useState('week');
   const [allProfiles, setAllProfiles] = useState([]);
+  const [overviewIndex, setOverviewIndex] = useState(0);
+  const [userIndex, setUserIndex] = useState(0);
+  
+  const overviewRef = useRef(null);
+  const userRef = useRef(null);
+
+  const handleOverviewScroll = () => {
+    if (!overviewRef.current) return;
+    const scrollLeft = overviewRef.current.scrollLeft;
+    const cardWidth = 296;
+    const index = Math.round(scrollLeft / cardWidth);
+    setOverviewIndex(index);
+  };
+
+  const handleUserScroll = () => {
+    if (!userRef.current) return;
+    const scrollLeft = userRef.current.scrollLeft;
+    const cardWidth = 296;
+    const index = Math.round(scrollLeft / cardWidth);
+    setUserIndex(index);
+  };
+
+    // ... rest of your existing code continues here
   useEffect(() => {
   loadAllProfiles();
 }, []);
@@ -406,9 +429,13 @@ const loadAllProfiles = async () => {
           </select>
         </div>
 
-        {/* Top Carousel - Summary Cards */}
+       {/* Top Carousel - Summary Cards */}
         <h2 className="section-title">Overview</h2>
-        <div className="overview-carousel">
+        <div 
+          className="overview-carousel" 
+          ref={overviewRef}
+          onScroll={handleOverviewScroll}
+        >
           <div className="summary-card">
             <div className="summary-icon">🏠</div>
             <h3>Family Summary</h3>
@@ -430,9 +457,23 @@ const loadAllProfiles = async () => {
           </div>
         </div>
 
+        {/* Dots for overview carousel */}
+        <div className="carousel-dots">
+          {[0, 1].map(i => (
+            <div 
+              key={i} 
+              className={`dot ${overviewIndex === i ? 'active' : ''}`}
+            />
+          ))}
+        </div>
+
         {/* Bottom Carousel - User Cards */}
         <h2 className="section-title">Individual Earnings</h2>
-        <div className="user-carousel">
+        <div 
+          className="user-carousel"
+          ref={userRef}
+          onScroll={handleUserScroll}
+        >
           {allProfiles.map(user => {
             const earnings = getUserEarnings(user.id);
             const choresCount = filteredCompletions.filter(c => c.user_id === user.id).length;
@@ -451,6 +492,16 @@ const loadAllProfiles = async () => {
               </div>
             );
           })}
+        </div>
+
+        {/* Dots for user carousel */}
+        <div className="carousel-dots">
+          {allProfiles.map((_, i) => (
+            <div 
+              key={i} 
+              className={`dot ${userIndex === i ? 'active' : ''}`}
+            />
+          ))}
         </div>
 
         {/* Recent Activity */}

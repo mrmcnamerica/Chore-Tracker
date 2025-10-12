@@ -1016,11 +1016,11 @@ body {
 }
 
 .user-earnings-card {
-  min-width: 140px;
-  max-width: 160px;
+  min-width: 280px;        /* Changed from 160px to match summary cards */
+  max-width: 280px;        /* Changed from 160px */
   background: white;
   border-radius: 16px;
-  padding: 20px;
+  padding: 24px;           /* Changed from 20px to match summary cards */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   scroll-snap-align: center;
   text-align: center;
@@ -1057,33 +1057,58 @@ body {
   color: #6b7280;
 }
 
-/* Desktop: Show all cards side by side */
+/* Mobile: One card at a time */
+@media (max-width: 767px) {
+  .overview-carousel,
+  .user-carousel {
+    padding: 0 calc(50vw - 140px) 40px;
+    scroll-padding: calc(50vw - 140px);
+    gap: 16px;
+  }
+}
+
+/* Desktop: Show all */
 @media (min-width: 768px) {
   .overview-carousel,
   .user-carousel {
     flex-wrap: wrap;
     overflow-x: visible;
     scroll-snap-type: none;
+    justify-content: flex-start;
+    padding: 0 16px 24px;
   }
 
-  .summary-card {
-    flex: 1;
-    min-width: 300px;
-  }
-
+  .summary-card,
   .user-earnings-card {
-    flex: 0 0 auto;
+    flex: 0 1 calc(33.333% - 16px);
+    max-width: none;
   }
 }
-
-/* Hide scrollbars but keep functionality */
-.overview-carousel::-webkit-scrollbar,
-.user-carousel::-webkit-scrollbar {
-  display: none;
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: -20px;
+  margin-bottom: 24px;
 }
 
-.overview-carousel,
-.user-carousel {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d1d5db;
+  transition: all 0.3s ease;
+}
+
+.dot.active {
+  background: #3b82f6;
+  width: 24px;
+  border-radius: 4px;
+}
+
+/* Hide dots on desktop */
+@media (min-width: 768px) {
+  .carousel-dots {
+    display: none;
+  }
 }
