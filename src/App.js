@@ -686,7 +686,6 @@ function AdminPanel({ chores, onAddChore, onDeleteChore }) {
     </div>
   );
 }
-
   return (
     <div className="admin-panel">
       <button onClick={() => setShowForm(!showForm)} className="primary-button">
