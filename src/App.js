@@ -522,7 +522,8 @@ function ProfilePage({ user }) {
 
 function AdminPanel({ chores, onAddChore, onDeleteChore }) {
   const [showForm, setShowForm] = useState(false);
-  const [newChore, setNewChore] = useState({
+  const [editingChore, setEditingChore] = useState(null);
+  const [choreForm, setChoreForm] = useState({
     name: '',
     description: '',
     value: '',
@@ -530,16 +531,161 @@ function AdminPanel({ chores, onAddChore, onDeleteChore }) {
     can_repeat: false
   });
 
-  const handleSubmit = () => {
-    if (newChore.name && newChore.value) {
-      onAddChore({
-        ...newChore,
-        value: parseFloat(newChore.value)
-      });
-      setNewChore({ name: '', description: '', value: '', is_recurring: true, can_repeat: false });
-      setShowForm(false);
+  const resetForm = () => {
+    setChoreForm({
+      name: '',
+      description: '',
+      value: '',
+      is_recurring: true,
+      can_repeat: false
+    });
+    setShowForm(false);
+    setEditingChore(null);
+  };
+
+  const handleSubmit = async () => {
+    if (choreForm.name && choreForm.value) {
+      if (editingChore) {
+        // Update existing chore
+        const { error } = await supabase
+          .from('chores')
+          .update({
+            name: choreForm.name,
+            description: choreForm.description,
+            value: parseFloat(choreForm.value),
+            is_recurring: choreForm.is_recurring,
+            can_repeat: choreForm.can_repeat
+          })
+          .eq('id', editingChore.id);
+
+        if (!error) {
+          // Reload chores (you'll need to pass a reload function or refetch)
+          window.location.reload(); // Quick fix - we'll improve this
+        }
+      } else {
+        // Add new chore
+        onAddChore({
+          ...choreForm,
+          value: parseFloat(choreForm.value)
+        });
+      }
+      resetForm();
     }
   };
+
+  const startEdit = (chore) => {
+    setEditingChore(chore);
+    setChoreForm({
+      name: chore.name,
+      description: chore.description || '',
+      value: chore.value.toString(),
+      is_recurring: chore.is_recurring,
+      can_repeat: chore.can_repeat
+    });
+    setShowForm(true);
+  };
+
+  return (
+    <div className="admin-panel">
+      <button
+        onClick={() => setShowForm(true)}
+        className="primary-button"
+      >
+        ➕ Add New Chore
+      </button>
+
+      {showForm && (
+        <div className="chore-form">
+          <h3>{editingChore ? 'Edit Chore' : 'New Chore'}</h3>
+          <input
+            type="text"
+            placeholder="Chore name"
+            value={choreForm.name}
+            onChange={(e) => setChoreForm({...choreForm, name: e.target.value})}
+          />
+          <input
+            type="text"
+            placeholder="Description (optional)"
+            value={choreForm.description}
+            onChange={(e) => setChoreForm({...choreForm, description: e.target.value})}
+          />
+          <input
+            type="number"
+            step="0.01"
+            placeholder="Value ($)"
+            value={choreForm.value}
+            onChange={(e) => setChoreForm({...choreForm, value: e.target.value})}
+          />
+          
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={choreForm.is_recurring}
+              onChange={(e) => setChoreForm({...choreForm, is_recurring: e.target.checked})}
+            />
+            <span>Recurring (resets weekly)</span>
+          </label>
+          
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={choreForm.can_repeat}
+              onChange={(e) => setChoreForm({...choreForm, can_repeat: e.target.checked})}
+            />
+            <span>Can be done multiple times</span>
+          </label>
+
+          <div className="form-buttons">
+            <button onClick={handleSubmit} className="primary-button">
+              {editingChore ? 'Save Changes' : 'Add'}
+            </button>
+            <button onClick={resetForm} className="secondary-button">
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      <h2 className="section-title">All Chores</h2>
+
+      <div className="space-y-2">
+        {chores.map(chore => (
+          <div key={chore.id} className="chore-card">
+            <div className="chore-info">
+              <h3>{chore.name}</h3>
+              {chore.description && (
+                <p className="chore-description">{chore.description}</p>
+              )}
+              <div className="chore-meta">
+                <span className="chore-value">${chore.value.toFixed(2)}</span>
+                {chore.can_repeat && (
+                  <span className="badge">Repeatable</span>
+                )}
+                {chore.is_recurring && (
+                  <span className="badge badge-purple">Weekly</span>
+                )}
+              </div>
+            </div>
+            <div className="chore-actions">
+              <button
+                onClick={() => startEdit(chore)}
+                className="edit-button"
+              >
+                ✏️
+              </button>
+              <button
+                onClick={() => onDeleteChore(chore.id)}
+                className="delete-button"
+              >
+                🗑️
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
   return (
     <div className="admin-panel">
@@ -614,4 +760,3 @@ function AdminPanel({ chores, onAddChore, onDeleteChore }) {
       ))}
     </div>
   );
-}
