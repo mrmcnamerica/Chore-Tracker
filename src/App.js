@@ -5,7 +5,13 @@ import './App.css';
 
 export default function ChoreTrackerApp() {
   const [currentUser, setCurrentUser] = useState(null);
-  const [activeTab, setActiveTab] = useState('chores');
+  const [activeTab, setActiveTab] = useState(
+  localStorage.getItem('activeTab') || 'chores'
+);
+const changeTab = (tab) => {
+  setActiveTab(tab);
+  localStorage.setItem('activeTab', tab);
+};
   const [chores, setChores] = useState([]);
   const [completions, setCompletions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -166,30 +172,30 @@ const loadCompletions = async () => {
         )}
       </div>
       <div className="tab-bar">
-       <TabButton 
+    <TabButton 
   icon="📋"
   label="Chores"
   active={activeTab === 'chores'}
-  onClick={() => setActiveTab('chores')}
+  onClick={() => changeTab('chores')}
 />
 <TabButton 
   icon="⏰"
   label="History"
   active={activeTab === 'history'}
-  onClick={() => setActiveTab('history')}
+  onClick={() => changeTab('history')}
 />
 <TabButton 
   icon="👤"
   label="Profile"
   active={activeTab === 'profile'}
-  onClick={() => setActiveTab('profile')}
+  onClick={() => changeTab('profile')}
 />
 {userProfile?.role === 'admin' && (
   <TabButton 
     icon="⚙️"
     label="Manage"
     active={activeTab === 'admin'}
-    onClick={() => setActiveTab('admin')}
+    onClick={() => changeTab('admin')}
   />
 )}
       </div>
