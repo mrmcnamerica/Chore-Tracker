@@ -346,6 +346,20 @@ function ChoresList({ chores, completions, onComplete, currentUser }) {
 
 function HistoryPage({ completions, currentUser, userProfile, onDeleteCompletion }) {
   const [timeFilter, setTimeFilter] = useState('week'); // 'today', 'week', 'month', 'all'
+  const [allProfiles, setAllProfiles] = useState([]);
+  useEffect(() => {
+  loadAllProfiles();
+}, []);
+
+const loadAllProfiles = async () => {
+  const { data } = await supabase
+    .from('profiles')
+    .select('*')
+    .neq('role', 'admin')
+    .order('name');
+  
+  if (data) setAllProfiles(data);
+};
 
   // Filter completions by time period
   const getFilteredCompletions = () => {
@@ -372,23 +386,6 @@ function HistoryPage({ completions, currentUser, userProfile, onDeleteCompletion
       .reduce((sum, c) => sum + c.amount_earned, 0);
   };
 
-  // Get all unique users who have completed chores
-  const getUniqueUsers = () => {
-    const userMap = new Map();
-    filteredCompletions.forEach(c => {
-      if (c.profiles && !userMap.has(c.user_id)) {
-        userMap.set(c.user_id, {
-          id: c.user_id,
-          name: c.profiles.name,
-          avatar_emoji: c.profiles.avatar_emoji,
-          avatar_color: c.profiles.avatar_color
-        });
-      }
-    });
-    return Array.from(userMap.values());
-  };
-
-  const allUsers = getUniqueUsers();
   const myEarnings = getUserEarnings(currentUser.id);
   const totalPaidOut = filteredCompletions.reduce((sum, c) => sum + c.amount_earned, 0);
 
@@ -416,7 +413,7 @@ function HistoryPage({ completions, currentUser, userProfile, onDeleteCompletion
             <div className="summary-icon">🏠</div>
             <h3>Family Summary</h3>
             <div className="summary-stats">
-              <p>{allUsers.length} active members</p>
+              <p>{allProfiles.length} active members</p>
               <p>{filteredCompletions.length} chores completed</p>
               <p className="summary-amount">${totalPaidOut.toFixed(2)} earned</p>
             </div>
@@ -436,7 +433,7 @@ function HistoryPage({ completions, currentUser, userProfile, onDeleteCompletion
         {/* Bottom Carousel - User Cards */}
         <h2 className="section-title">Individual Earnings</h2>
         <div className="user-carousel">
-          {allUsers.map(user => {
+          {allProfiles.map(user => {
             const earnings = getUserEarnings(user.id);
             const choresCount = filteredCompletions.filter(c => c.user_id === user.id).length;
             
