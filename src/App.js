@@ -620,15 +620,7 @@ reset_day: choreForm.reset_day
             value={choreForm.value}
             onChange={(e) => setChoreForm({...choreForm, value: e.target.value})}
           />
-          
-          <label className="checkbox-label">
-            <input
-              type="checkbox"
-              checked={choreForm.is_recurring}
-              onChange={(e) => setChoreForm({...choreForm, is_recurring: e.target.checked})}
-            />
-            <span>Recurring (resets weekly)</span>
-          </label>
+
           <label className="checkbox-label">
   <input
     type="checkbox"
@@ -663,15 +655,7 @@ reset_day: choreForm.reset_day
     checked={choreForm.can_repeat}
     onChange={(e) => setChoreForm({...choreForm, can_repeat: e.target.checked})}
   />
-  <span>Can be done multiple times</span>
-</label>
-          
-          <label className="checkbox-label">
-            <input
-              type="checkbox"
-              checked={choreForm.can_repeat}
-              onChange={(e) => setChoreForm({...choreForm, can_repeat: e.target.checked})}
-            />
+ 
             <span>Can be done multiple times</span>
           </label>
 
