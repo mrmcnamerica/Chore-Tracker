@@ -322,7 +322,6 @@ function ChoresList({ chores, completions, onComplete, currentUser }) {
                 {chore.can_repeat && <span className="badge">Repeatable</span>}
               </div>
             </div>
-            
             <button
   onClick={() => handleComplete(chore)}
   disabled={isCompleted || completingId === chore.id}
@@ -334,7 +333,7 @@ function ChoresList({ chores, completions, onComplete, currentUser }) {
       : ''
   }`}
 >
-  {isCompleted ? 'Done' : 'Complete'}
+  {completingId === chore.id ? '✓' : isCompleted ? 'Done' : 'Complete'}
 </button>
           </div>
         );
