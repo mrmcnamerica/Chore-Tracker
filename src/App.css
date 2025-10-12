@@ -907,9 +907,8 @@ body {
   animation: completeFlash 0.6s ease;
   pointer-events: none;
 }
-/* Time Filter */
 .time-filter {
-  padding: 16px 16px 16px 20px;  /* Match the 20px left padding of cards */
+  padding: 16px 20px;  /* Match carousel's 20px horizontal padding */
   text-align: left;
 }
 
