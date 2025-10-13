@@ -40,15 +40,16 @@ body {
   overflow-y: auto;
   padding-top: 8px;
   padding-bottom: 80px;
+  will-change: transform, opacity;
 }
 
 /* ANIMATIONS */
 .content-area.slide-left {
-  animation: slideInFromRight 0.3s ease-out;
+  animation: slideInFromRight 0.2s ease-out;
 }
 
 .content-area.slide-right {
-  animation: slideInFromLeft 0.3s ease-out;
+  animation: slideInFromLeft 0.2s ease-out;
 }
 
 @keyframes slideInFromRight {
