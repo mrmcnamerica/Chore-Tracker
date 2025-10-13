@@ -750,7 +750,7 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
   console.log('Payment history:', paymentHistory);
   console.log('Current user ID:', currentUser.id);
   console.log('Is admin:', isAdmin);
-  console.log('Filtered history:', paymentHistory.filter(payment => isAdmin || payment.userid === currentUser.id));
+  console.log('Filtered history:', paymentHistory.filter(payment => isAdmin || payment.userId === currentUser.id));
   console.log('About to filter. First payment userId:', paymentHistory[0]?.userId);
   console.log('Current user ID:', currentUser.id);
   console.log('Are they equal?', paymentHistory[0]?.userId === currentUser.id);
@@ -851,14 +851,14 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
               </select>
             </div>
 
-            {paymentHistory.length === 0 ? (
+            Histor{paymenty.length === 0 ? (
               <div className="empty-state">
                 <p>No payment history</p>
               </div>
             ) : (
 
               paymentHistory
-                .filter(payment => isAdmin || payment.user.id === currentUser.id)
+                .filter(payment => isAdmin || payment.userid === currentUser.id)
                 .map((payment, idx) => (
                   <div key={idx} className="history-card">
                     <div
