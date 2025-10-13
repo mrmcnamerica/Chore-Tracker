@@ -740,6 +740,12 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
   const paymentHistory = getPaymentHistory();
   const isAdmin = userProfile?.role === 'admin';
 
+  // Logging for payment history
+  console.log('Payment history:', paymentHistory);
+  console.log('Current user ID:', currentUser.id);
+  console.log('Is admin:', isAdmin);
+  console.log('Filtered history:', paymentHistory.filter(payment => isAdmin || payment.user.id === currentUser.id));
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="payout-modal" onClick={(e) => e.stopPropagation()}>
