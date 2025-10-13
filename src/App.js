@@ -696,6 +696,7 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
 
       if (!grouped[key]) {
         grouped[key] = {
+          user: c.user_id,
           user: c.profiles,
           date: c.paid_at,
           total: 0
@@ -744,7 +745,7 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
   console.log('Payment history:', paymentHistory);
   console.log('Current user ID:', currentUser.id);
   console.log('Is admin:', isAdmin);
-  console.log('Filtered history:', paymentHistory.filter(payment => isAdmin || payment.user.id === currentUser.id));
+  console.log('Filtered history:', paymentHistory.filter(payment => isAdmin || payment.userid === currentUser.id));
 
   return (
     <div className="modal-overlay" onClick={onClose}>
