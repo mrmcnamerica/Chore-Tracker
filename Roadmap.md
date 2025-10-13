@@ -153,7 +153,7 @@ A full-stack multi-user chore tracking app for families with admin controls, ear
    
    **Quick Wins (~30 mins each):**
    - ✅ Tab bar indicator slide - Blue bar smoothly moves between tabs (COMPLETED)
-   - Page slide transitions - Content slides left/right when changing tabs
+   - ✅ Page slide transitions - Content slides left/right when changing tabs (COMPLETED)
    - Button press animations - Scale down slightly on tap
    - Card tap feedback - Subtle scale/shadow on earnings card tap
    - Number counter animations - Earnings amount counts up smoothly
@@ -167,7 +167,7 @@ A full-stack multi-user chore tracking app for families with admin controls, ear
    - Avatar color transitions - Color changes fade smoothly in profile editor
    
    **Bigger Projects (2+ hours):**
-   - Skeleton screens - Loading placeholders instead of blank page
+   - Skeleton screens - Loading placeholders instead of blank page (reduces animation jank)
    - Payment success confetti - Celebration when paying someone
    - Goal reached animation - Special effect when hitting a goal
    - Completion celebration - Extra polish on chore complete

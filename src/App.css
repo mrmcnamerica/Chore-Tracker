@@ -221,7 +221,7 @@ body {
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
 }
 
 .primary-button:hover {
@@ -229,7 +229,7 @@ body {
 }
 
 .primary-button:active {
-  transform: scale(0.98);
+  transform: scale(0.96);
 }
 
 .success-message {
@@ -489,6 +489,10 @@ body {
   background: #dc2626;
 }
 
+.logout-button:active {
+  transform: scale(0.96);
+}
+
 /* Admin Panel */
 .chore-form {
   background: white;
@@ -539,6 +543,10 @@ body {
   cursor: pointer;
 }
 
+.secondary-button:active {
+  transform: scale(0.95);
+}
+
 .delete-button {
   padding: 8px 12px;
   background: transparent;
@@ -551,6 +559,10 @@ body {
 
 .delete-button:hover {
   background: #fee2e2;
+}
+
+.delete-button:active {
+  transform: scale(0.9);
 }
 
 .loading {
@@ -597,6 +609,7 @@ body {
   gap: 8px;
 }
 
+
 .save-button,
 .cancel-button {
   flex: 1;
@@ -613,9 +626,17 @@ body {
   color: white;
 }
 
+.save-button:active {
+  transform: scale(0.96);
+}
+
 .cancel-button {
   background: #e5e7eb;
   color: #374151;
+}
+
+.cancel-button:active {
+  transform: scale(0.96);
 }
 
 .edit-name-button {
@@ -968,11 +989,6 @@ body {
   text-align: left;
 }
 
-/* Time Filter */
-.time-filter {
-  padding: 16px;
-  text-align: left;
-}
 
 .time-filter-select {
   padding: 8px 32px 8px 16px;
@@ -1079,6 +1095,10 @@ body {
 
 .mark-paid-button:hover {
   background: #2563eb;
+}
+
+.mark-paid-button:active {
+  transform: scale(0.95);
 }
 
 /* User Card Specific Styles */
