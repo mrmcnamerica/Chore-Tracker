@@ -56,7 +56,6 @@ body {
   padding-bottom: max(8px, env(safe-area-inset-bottom));
   height: auto;
   min-height: 64px;
-  position: relative;
 }
 
 .tab-indicator {
