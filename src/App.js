@@ -12,12 +12,25 @@ export default function ChoreTrackerApp() {
     setActiveTab(tab);
     localStorage.setItem('activeTab', tab);
   };
+  // Finds tab buton by name and updates indicator state
+  const updateIndicator = (tabName) => {
+    const tabElement = tabRefs.current[tabName];
+    if (tabElement) {
+      const { offsetLeft, offsetWidth } = tabElement;
+      setIndicatorStyle({ left: offsetLeft, width: offsetWidth });
+    }
+  };
+  useEffect(() => {
+    updateIndicator(activeTab);
+  }, [activeTab]);
   const [chores, setChores] = useState([]);
   const [completions, setCompletions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userProfile, setUserProfile] = useState(null);
   const [showPayoutModal, setShowPayoutModal] = useState(false);  // Payment Modal
   const [allProfiles, setAllProfiles] = useState([]);
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+  const tabRefs = useRef({}); // Creates useRef to hold references for each tab
 
   // Check if user is logged in
   useEffect(() => {
@@ -200,18 +213,21 @@ export default function ChoreTrackerApp() {
       </div>
       <div className="tab-bar">
         <TabButton
+          ref={(el) => (tabRefs.current['chores'] = el)}
           icon="📋"
           label="Chores"
           active={activeTab === 'chores'}
           onClick={() => changeTab('chores')}
         />
         <TabButton
+          ref={(el) => (tabRefs.current['history'] = el)}
           icon="⏰"
           label="History"
           active={activeTab === 'history'}
           onClick={() => changeTab('history')}
         />
         <TabButton
+          ref={(el) => (tabRefs.current['profile'] = el)}
           icon="👤"
           label="Profile"
           active={activeTab === 'profile'}
@@ -219,12 +235,20 @@ export default function ChoreTrackerApp() {
         />
         {userProfile?.role === 'admin' && (
           <TabButton
+            ref={(el) => (tabRefs.current['admin'] = el)}
             icon="⚙️"
             label="Manage"
             active={activeTab === 'admin'}
             onClick={() => changeTab('admin')}
           />
         )}
+        <div
+          className="tab-indicator"
+          style={{
+            left: `${indicatorStyle.left}px`,
+            width: `${indicatorStyle.width}px`
+          }}
+        />
       </div>
 
       {showPayoutModal && (
@@ -235,42 +259,31 @@ export default function ChoreTrackerApp() {
           userProfile={userProfile}
           completions={completions}
           allProfiles={allProfiles}
-          onPaymentComplete={loadCompletions}  // ADD THIS
+          onPaymentComplete={loadCompletions}
         />
       )}
-    </div>  // ← This closes app-container
+    </div>  // ← Closes app-container
   );
-}
+}  // ← Closes ChoreTrackerApp
 
-function TabButton({ icon, label, active, onClick }) {
+const TabButton = React.forwardRef(({ icon, label, active, onClick }, ref) => {
   return (
-    <button onClick={onClick} className={`tab-button ${active ? 'active' : ''}`}>
+    <button ref={ref} onClick={onClick} className={`tab-button ${active ? 'active' : ''}`}>
       <div className="tab-icon">{icon}</div>
       <span className="tab-label">{label}</span>
     </button>
   );
-}
+});
 
-function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [linkSent, setLinkSent] = useState(false);
-  const [error, setError] = useState('');
-
-  const handleSendLink = async () => {
-    setError('');
-    const { error } = await supabase.auth.signInWithOtp({
-      email: email,
-      options: {
-        emailRedirectTo: window.location.origin
-      }
-    });
-
-    if (error) {
-      setError(error.message);
-    } else {
-      setLinkSent(true);
-    }
-  };
+function LoginPage() {  // ← LoginPage starts here
+  const TabButton = React.forwardRef(({ icon, label, active, onClick }, ref) => {
+    return (
+      <button ref={ref} onClick={onClick} className={`tab-button ${active ? 'active' : ''}`}>
+        <div className="tab-icon">{icon}</div>
+        <span className="tab-label">{label}</span>
+      </button>
+    );
+  });
 
   return (
     <div className="login-page">
