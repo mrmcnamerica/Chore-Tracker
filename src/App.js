@@ -479,6 +479,15 @@ const loadAllProfiles = async () => {
               <p className="summary-amount">${totalPaidOut.toFixed(2)}</p>
               <p className="summary-label">Total unpaid</p>
               <button className="mark-paid-button">View/Send Payouts</button>
+              <button 
+  className="mark-paid-button"
+  onClick={() => {
+    console.log('Button clicked!');
+    onOpenPayoutModal();
+  }}
+>
+  View/Send Payouts
+</button>
             </div>
           </div>
         </div>
