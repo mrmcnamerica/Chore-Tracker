@@ -678,6 +678,10 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
 
     let paidCompletions = completions.filter(c => c.paid_at);
 
+    console.log('All completions:', completions.length);
+    console.log('Paid completions:', paidCompletions.length);
+    console.log('History filter:', historyFilter);
+
     // Filter by time if not 'all'
     if (historyFilter !== 'all') {
       paidCompletions = paidCompletions.filter(c => {
@@ -687,6 +691,7 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
         return true;
       });
     }
+    console.log('After time filter:', paidCompletions.length);
 
     // Group by user and paid_at date
     const grouped = {};
