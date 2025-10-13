@@ -858,7 +858,7 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
             ) : (
 
               paymentHistory
-                .filter(payment => isAdmin || payment.userid === currentUser.id)
+                .filter(payment => isAdmin || payment.userId === currentUser.id)
                 .map((payment, idx) => (
                   <div key={idx} className="history-card">
                     <div
