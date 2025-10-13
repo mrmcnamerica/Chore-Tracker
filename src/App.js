@@ -740,7 +740,7 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
     <div className="modal-overlay" onClick={onClose}>
       <div className="payout-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>💰 Payouts</h2>
+          <h2>💰 Payments</h2>
           <button onClick={onClose} className="close-button">✕</button>
         </div>
 
