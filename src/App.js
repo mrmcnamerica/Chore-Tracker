@@ -23,6 +23,12 @@ export default function ChoreTrackerApp() {
   useEffect(() => {
     updateIndicator(activeTab);
   }, [activeTab]);
+  useEffect(() => {
+    // Wait for DOM to be ready, then set initial position
+    setTimeout(() => {
+      updateIndicator(activeTab);
+    }, 100);
+  }, []);
   const [chores, setChores] = useState([]);
   const [completions, setCompletions] = useState([]);
   const [loading, setLoading] = useState(true);
