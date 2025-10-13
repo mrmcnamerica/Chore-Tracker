@@ -478,7 +478,6 @@ const loadAllProfiles = async () => {
             <div className="summary-stats">
               <p className="summary-amount">${totalPaidOut.toFixed(2)}</p>
               <p className="summary-label">Total unpaid</p>
-              <button className="mark-paid-button">View/Send Payouts</button>
               <button 
   className="mark-paid-button"
   onClick={() => {
