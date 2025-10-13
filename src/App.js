@@ -6,16 +6,18 @@ import './App.css';
 export default function ChoreTrackerApp() {
   const [currentUser, setCurrentUser] = useState(null);
   const [activeTab, setActiveTab] = useState(
-  localStorage.getItem('activeTab') || 'chores'
-);
-const changeTab = (tab) => {
-  setActiveTab(tab);
-  localStorage.setItem('activeTab', tab);
-};
+    localStorage.getItem('activeTab') || 'chores'
+  );
+  const changeTab = (tab) => {
+    setActiveTab(tab);
+    localStorage.setItem('activeTab', tab);
+  };
   const [chores, setChores] = useState([]);
   const [completions, setCompletions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userProfile, setUserProfile] = useState(null);
+  const [showPayoutModal, setShowPayoutModal] = useState(false);  // Payment Modal
+  const [allProfiles, setAllProfiles] = useState([]);              
 
   // Check if user is logged in
   useEffect(() => {
@@ -49,15 +51,16 @@ const changeTab = (tab) => {
 }, []);
 
   // Load user profile, chores, and completions
-  
-  useEffect(() => {
-    if (currentUser) {
-      loadUserProfile();
-      loadChores();
-      loadCompletions();
-    }
-  }, [currentUser]);
-  const loadUserProfile = async () => {  // ADD THIS WHOLE FUNCTION
+useEffect(() => {
+  if (currentUser) {
+    loadUserProfile();
+    loadChores();
+    loadCompletions();
+    loadAllProfiles();  // ADD THIS LINE
+  }
+}, [currentUser]);
+
+const loadUserProfile = async () => {
   const { data, error } = await supabase
     .from('profiles')
     .select('*')
@@ -66,15 +69,15 @@ const changeTab = (tab) => {
   
   if (data) setUserProfile(data);
 };
-
-  const loadChores = async () => {
-    const { data, error } = await supabase
-      .from('chores')
-      .select('*')
-      .order('created_at', { ascending: false });
-    
-    if (data) setChores(data);
-  };
+// ADD THIS FUNCTION
+const loadChores = async () => {
+  const { data, error } = await supabase
+    .from('chores')
+    .select('*')
+    .order('created_at', { ascending: false });
+  
+  if (data) setChores(data);
+};
 
 const loadCompletions = async () => {
   const { data, error } = await supabase
@@ -84,6 +87,17 @@ const loadCompletions = async () => {
   
   if (data) setCompletions(data);
 };
+
+// ADD THIS NEW FUNCTION after loadUserProfile
+const loadAllProfiles = async () => {
+  const { data } = await supabase
+    .from('profiles')
+    .select('*')
+    .order('name');
+  
+  if (data) setAllProfiles(data);
+};
+
 
   const completeChore = async (chore) => {
     const { data, error } = await supabase
@@ -211,8 +225,19 @@ const loadCompletions = async () => {
   />
 )}
       </div>
-    </div>
-  );
+    
+    {showPayoutModal && (
+      <PayoutModal
+        isOpen={showPayoutModal}
+        onClose={() => setShowPayoutModal(false)}
+        currentUser={currentUser}
+        userProfile={userProfile}
+        completions={completions}
+        allProfiles={allProfiles}
+      />
+    )}
+  </div>  // ← This closes app-container
+);
 }
 
 function TabButton({ icon, label, active, onClick }) {
@@ -452,7 +477,7 @@ const loadAllProfiles = async () => {
             <div className="summary-stats">
               <p className="summary-amount">${totalPaidOut.toFixed(2)}</p>
               <p className="summary-label">Total unpaid</p>
-              <button className="mark-paid-button">Mark as Paid</button>
+              <button className="mark-paid-button">View/Send Payouts</button>
             </div>
           </div>
         </div>
@@ -589,6 +614,185 @@ const loadAllProfiles = async () => {
             </div>
           ))
       )}
+    </div>
+  );
+}
+function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, allProfiles }) {
+  const [historyFilter, setHistoryFilter] = useState('all');
+  
+  if (!isOpen) return null;
+
+  // Calculate pending payouts per user
+  const getPendingPayouts = () => {
+    const userPayouts = {};
+    
+    completions
+      .filter(c => !c.paid_at) // Only unpaid completions
+      .forEach(c => {
+        if (!userPayouts[c.user_id]) {
+          userPayouts[c.user_id] = {
+            user: c.profiles,
+            total: 0,
+            count: 0
+          };
+        }
+        userPayouts[c.user_id].total += c.amount_earned;
+        userPayouts[c.user_id].count += 1;
+      });
+    
+    return Object.values(userPayouts);
+  };
+
+  // Get payment history
+  const getPaymentHistory = () => {
+    const now = new Date();
+    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+
+    let paidCompletions = completions.filter(c => c.paid_at);
+
+    // Filter by time if not 'all'
+    if (historyFilter !== 'all') {
+      paidCompletions = paidCompletions.filter(c => {
+        const paidDate = new Date(c.paid_at);
+        if (historyFilter === 'week') return paidDate >= weekAgo;
+        if (historyFilter === 'month') return paidDate >= monthAgo;
+        return true;
+      });
+    }
+
+    // Group by user and paid_at date
+    const grouped = {};
+    paidCompletions.forEach(c => {
+      const dateKey = new Date(c.paid_at).toLocaleDateString();
+      const key = `${c.user_id}-${dateKey}`;
+      
+      if (!grouped[key]) {
+        grouped[key] = {
+          user: c.profiles,
+          date: c.paid_at,
+          total: 0
+        };
+      }
+      grouped[key].total += c.amount_earned;
+    });
+
+    return Object.values(grouped).sort((a, b) => 
+      new Date(b.date) - new Date(a.date)
+    );
+  };
+
+  // Mark user's completions as paid
+  const handlePayUser = async (userId) => {
+    const unpaidCompletions = completions
+      .filter(c => c.user_id === userId && !c.paid_at)
+      .map(c => c.id);
+
+    const { error } = await supabase
+      .from('completions')
+      .update({ paid_at: new Date().toISOString() })
+      .in('id', unpaidCompletions);
+
+    if (!error) {
+      window.location.reload(); // Quick refresh - we can improve this later
+    }
+  };
+
+  const pendingPayouts = getPendingPayouts();
+  const paymentHistory = getPaymentHistory();
+  const isAdmin = userProfile?.role === 'admin';
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="payout-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>💰 Payouts</h2>
+          <button onClick={onClose} className="close-button">✕</button>
+        </div>
+
+        <div className="modal-content">
+          {/* Pending Payouts (Admin Only) */}
+          {isAdmin && (
+            <div className="pending-section">
+              <div className="section-header">Pending Payouts</div>
+              
+              {pendingPayouts.length === 0 ? (
+                <div className="empty-state">
+                  <p>No pending payouts</p>
+                </div>
+              ) : (
+                pendingPayouts.map(payout => (
+                  <div key={payout.user.id} className="user-payout-card">
+                    <div 
+                      className="payout-avatar" 
+                      style={{ background: payout.user.avatar_color }}
+                    >
+                      {payout.user.avatar_emoji}
+                    </div>
+                    <div className="payout-info">
+                      <div className="payout-name">{payout.user.name}</div>
+                      <div className="payout-amount">${payout.total.toFixed(2)}</div>
+                    </div>
+                    <button 
+                      onClick={() => {
+                        if (window.confirm(`Pay ${payout.user.name} $${payout.total.toFixed(2)}?`)) {
+                          handlePayUser(payout.user.id);
+                        }
+                      }}
+                      className="pay-button"
+                    >
+                      Pay
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+
+          {/* Payment History */}
+          <div className="history-section">
+            <div className="section-header">Payment History</div>
+            
+            <div className="time-filter">
+              <select 
+                value={historyFilter} 
+                onChange={(e) => setHistoryFilter(e.target.value)}
+                className="time-filter-select"
+              >
+                <option value="all">All Time</option>
+                <option value="month">This Month</option>
+                <option value="week">This Week</option>
+              </select>
+            </div>
+
+            {paymentHistory.length === 0 ? (
+              <div className="empty-state">
+                <p>No payment history</p>
+              </div>
+            ) : (
+              paymentHistory
+                .filter(payment => isAdmin || payment.user.id === currentUser.id)
+                .map((payment, idx) => (
+                  <div key={idx} className="history-card">
+                    <div 
+                      className="history-avatar" 
+                      style={{ background: payment.user.avatar_color }}
+                    >
+                      {payment.user.avatar_emoji}
+                    </div>
+                    <div className="history-info">
+                      <div className="history-name">{payment.user.name}</div>
+                      <div className="history-date">
+                        {new Date(payment.date).toLocaleDateString()}
+                      </div>
+                    </div>
+                    <div className="history-amount">${payment.total.toFixed(2)}</div>
+                  </div>
+                ))
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
