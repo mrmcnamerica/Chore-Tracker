@@ -701,7 +701,7 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
 
       if (!grouped[key]) {
         grouped[key] = {
-          user: c.user_id,
+          userId: c.user_id,
           user: c.profiles,
           date: c.paid_at,
           total: 0
