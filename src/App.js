@@ -474,16 +474,29 @@ function HistoryPage({ completions, currentUser, userProfile, onDeleteCompletion
 
           <div className="summary-card payout-card">
             <div className="summary-icon">💵</div>
-            <h3>Pending Payouts</h3>
+            <h3>Payouts</h3>
             <div className="summary-stats">
-              <p className="summary-amount">${totalPaidOut.toFixed(2)}</p>
-              <p className="summary-label">Total unpaid</p>
+              <div style={{ marginBottom: '16px' }}>
+                <p className="summary-label">Pending</p>
+                <p className="summary-amount" style={{ color: '#ef4444' }}>
+                  ${filteredCompletions
+                    .filter(c => !c.paid_at)
+                    .reduce((sum, c) => sum + c.amount_earned, 0)
+                    .toFixed(2)}
+                </p>
+              </div>
+              <div>
+                <p className="summary-label">Paid ({historyFilter === 'all' ? 'All Time' : historyFilter})</p>
+                <p className="summary-amount" style={{ color: '#10b981' }}>
+                  ${filteredCompletions
+                    .filter(c => c.paid_at)
+                    .reduce((sum, c) => sum + c.amount_earned, 0)
+                    .toFixed(2)}
+                </p>
+              </div>
               <button
                 className="mark-paid-button"
-                onClick={() => {
-                  console.log('Button clicked!');
-                  onOpenPayoutModal();
-                }}
+                onClick={onOpenPayoutModal}
               >
                 View/Send Payouts
               </button>
