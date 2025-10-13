@@ -597,7 +597,9 @@ function HistoryPage({ completions, currentUser, userProfile, onDeleteCompletion
   // Regular user view (existing code)
   return (
     <div className="history-page">
-      <div className="earnings-card">
+      <div className="earnings-card clickable-card">
+        onClick={onOpenPayoutModal}
+        style={{ cursor: 'pointer' }}
         <p className="earnings-label">My Total Earnings</p>
         <p className="earnings-amount">${myEarnings.toFixed(2)}</p>
         <p className="earnings-count">
