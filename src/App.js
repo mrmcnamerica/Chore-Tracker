@@ -486,7 +486,7 @@ function HistoryPage({ completions, currentUser, userProfile, onDeleteCompletion
                 </p>
               </div>
               <div>
-                <p className="summary-label">Paid ({historyFilter === 'all' ? 'All Time' : historyFilter})</p>
+                <p className="summary-label">Paid ({timeFilter === 'all' ? 'All Time' : timeFilter})</p>
                 <p className="summary-amount" style={{ color: '#10b981' }}>
                   ${filteredCompletions
                     .filter(c => c.paid_at)
