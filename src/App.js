@@ -742,12 +742,12 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
     <div className="modal-overlay" onClick={onClose}>
       <div className="payout-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>💰 Payments</h2>
+          <h2>💰 {isAdmin ? 'Payments' : 'My Payments'}</h2>
           <button onClick={onClose} className="close-button">✕</button>
         </div>
 
         <div className="modal-content">
-          {/* Pending Payouts (Admin Only) */}
+          {/* Admin View - Pending Payments */}
           {isAdmin && (
             <div className="pending-section">
               <div className="section-header">Pending Payments</div>
@@ -771,12 +771,8 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
                     </div>
                     <button
                       onClick={() => {
-                        console.log('Pay button clicked for user:', payout.user.name);
                         if (window.confirm(`Pay ${payout.user.name} $${payout.total.toFixed(2)}?`)) {
-                          console.log('Confirmed, calling handlePayUser');
                           handlePayUser(payout.userId);
-                        } else {
-                          console.log('Payment cancelled');
                         }
                       }}
                       className="pay-button"
@@ -789,7 +785,40 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
             </div>
           )}
 
-          {/* Payment History */}
+          {/* User View - Payment Summary */}
+          {!isAdmin && (
+            <div className="payment-summary">
+              <div className="section-header">Payment Summary</div>
+
+              <div className="summary-cards">
+                <div className="summary-mini-card pending">
+                  <div className="summary-mini-label">Pending</div>
+                  <div className="summary-mini-amount">
+                    ${completions
+                      .filter(c => c.user_id === currentUser.id && !c.paid_at)
+                      .reduce((sum, c) => sum + c.amount_earned, 0)
+                      .toFixed(2)}
+                  </div>
+                </div>
+
+                <div className="summary-mini-card paid">
+                  <div className="summary-mini-label">Paid</div>
+                  <div className="summary-mini-amount">
+                    ${completions
+                      .filter(c => c.user_id === currentUser.id && c.paid_at)
+                      .reduce((sum, c) => sum + c.amount_earned, 0)
+                      .toFixed(2)}
+                  </div>
+                </div>
+              </div>
+
+              <div className="info-message">
+                💡 Ask your parents about pending payments!
+              </div>
+            </div>
+          )}
+
+          {/* Payment History - Both Views */}
           <div className="history-section">
             <div className="section-header">Payment History</div>
 
