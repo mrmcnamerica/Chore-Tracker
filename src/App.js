@@ -352,10 +352,10 @@ function ChoresList({ chores, completions, onComplete, currentUser }) {
               onClick={() => handleComplete(chore)}
               disabled={isCompleted || completingId === chore.id}
               className={`complete-button ${isCompleted
-                  ? 'disabled'
-                  : completingId === chore.id
-                    ? 'completing'
-                    : ''
+                ? 'disabled'
+                : completingId === chore.id
+                  ? 'completing'
+                  : ''
                 }`}
             >
               {completingId === chore.id ? (
@@ -753,8 +753,12 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
                     </div>
                     <button
                       onClick={() => {
+                        console.log('Pay button clicked for user:', payout.user.name);
                         if (window.confirm(`Pay ${payout.user.name} $${payout.total.toFixed(2)}?`)) {
+                          console.log('Confirmed, calling handlePayUser');
                           handlePayUser(payout.user.id);
+                        } else {
+                          console.log('Payment cancelled');
                         }
                       }}
                       className="pay-button"
