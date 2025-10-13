@@ -137,8 +137,9 @@ A full-stack multi-user chore tracking app for families with admin controls, ear
 
 7. **Enhanced Animations**
    - More interaction feedback
-   - Page transitions
+   - Page transitions (swipe-style animations between tabs)
    - Loading states
+   - Smooth micro-interactions
 
 8. **Responsive Sizing Improvements**
    - Better tablet layouts
@@ -170,7 +171,11 @@ A full-stack multi-user chore tracking app for families with admin controls, ear
 
 **Long-term web features & family hub:**
 
-1. **Kiosk Mode / Family Dashboard**
+1. **PWA Meta Tag Fix**
+   - Update deprecated apple-mobile-web-app-capable meta tag
+   - Replace with modern mobile-web-app-capable tag
+
+2. **Kiosk Mode / Family Dashboard**
    - Always-on display mode
    - Family calendar integration
    - Shared announcements
@@ -200,6 +205,7 @@ A full-stack multi-user chore tracking app for families with admin controls, ear
 
 - [ ] Time filter dropdown alignment with cards below (mobile)
 - [ ] Chore edit requires page reload (should update live)
+- [ ] Consider if "Paid" amount on payout card should respect time filter or always show total paid
 
 ---
 

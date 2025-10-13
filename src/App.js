@@ -474,7 +474,7 @@ function HistoryPage({ completions, currentUser, userProfile, onDeleteCompletion
 
           <div className="summary-card payout-card">
             <div className="summary-icon">💵</div>
-            <h3>Payouts</h3>
+            <h3>Payments</h3>
             <div className="summary-stats">
               <div style={{ marginBottom: '16px' }}>
                 <p className="summary-label">Pending</p>
@@ -498,7 +498,7 @@ function HistoryPage({ completions, currentUser, userProfile, onDeleteCompletion
                 className="mark-paid-button"
                 onClick={onOpenPayoutModal}
               >
-                View/Send Payouts
+                View/Send Payments
               </button>
             </div>
           </div>
@@ -748,11 +748,11 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
           {/* Pending Payouts (Admin Only) */}
           {isAdmin && (
             <div className="pending-section">
-              <div className="section-header">Pending Payouts</div>
+              <div className="section-header">Pending Payments</div>
 
               {pendingPayouts.length === 0 ? (
                 <div className="empty-state">
-                  <p>No pending payouts</p>
+                  <p>No pending payments</p>
                 </div>
               ) : (
                 pendingPayouts.map(payout => (
