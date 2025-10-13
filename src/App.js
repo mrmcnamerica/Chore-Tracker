@@ -275,15 +275,26 @@ const TabButton = React.forwardRef(({ icon, label, active, onClick }, ref) => {
   );
 });
 
-function LoginPage() {  // ← LoginPage starts here
-  const TabButton = React.forwardRef(({ icon, label, active, onClick }, ref) => {
-    return (
-      <button ref={ref} onClick={onClick} className={`tab-button ${active ? 'active' : ''}`}>
-        <div className="tab-icon">{icon}</div>
-        <span className="tab-label">{label}</span>
-      </button>
-    );
-  });
+function LoginPage() { //login page starts here
+  const [email, setEmail] = useState('');
+  const [linkSent, setLinkSent] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSendLink = async () => {
+    setError('');
+    const { error } = await supabase.auth.signInWithOtp({
+      email: email,
+      options: {
+        emailRedirectTo: window.location.origin
+      }
+    });
+
+    if (error) {
+      setError(error.message);
+    } else {
+      setLinkSent(true);
+    }
+  };
 
   return (
     <div className="login-page">

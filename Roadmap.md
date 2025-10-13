@@ -102,46 +102,60 @@ A full-stack multi-user chore tracking app for families with admin controls, ear
 
 **Priority features for web version:**
 
-1. **Weekly Payout Tracker**
-   - Modal popup for payouts
+1. ✅ **Payment Tracking (COMPLETED)**
+   - Modal popup for payments
    - Mark each user as paid individually
    - Track payment history
    - Clear pending amounts after payment
+   - User-specific view (pending/paid summary)
+   - Admin and regular user views
 
-2. **Delete Completed Chores (Admin)**
-   - Remove specific completions from history
-   - Adjust user earnings accordingly
+2. ✅ **Delete Completed Chores (COMPLETED)**
+   - Admin can delete specific completions from history
+   - Earnings adjust automatically
 
-3. **App Settings**
+3. **Family Overview Modal**
+   - Click Family Summary card to open modal
+   - **Admin View:**
+     - Individual goals dashboard (all users' goals + progress)
+     - Create/edit goals for any user
+     - Chore analytics (who does what, completion rates, fairness)
+     - Identify neglected chores
+   - **User View:**
+     - Personal goals + progress
+     - Most completed chores (top 3-5)
+     - Personal stats
+
+4. **App Settings**
    - User preferences panel
    - Notification settings
    - Display options
    - Account management
 
-4. **Developer Mode**
+5. **Developer Mode**
    - Debug panel/console
    - Database inspection tools
    - Performance metrics
    - Feature flags for testing
 
-5. **Notifications Bell**
+6. **Notifications Bell**
    - In-app notification center
    - Badge count for unread notifications
    - Activity feed (chores completed, payments made)
    - Notification preferences
 
-6. **Dark Mode**
+7. **Dark Mode**
    - Toggle between light/dark themes
    - Save preference per user
    - System preference detection
 
-7. **Enhanced Animations**
+8. **Enhanced Animations**
    - More interaction feedback
    - Page transitions (swipe-style animations between tabs)
    - Loading states
    - Smooth micro-interactions
 
-8. **Responsive Sizing Improvements**
+9. **Responsive Sizing Improvements**
    - Better tablet layouts
    - Desktop optimization
    - Card sizing adjustments
@@ -157,6 +171,9 @@ A full-stack multi-user chore tracking app for families with admin controls, ear
 2. Haptic feedback
 3. Widgets (earnings summary, pending chores)
 4. Apple Watch app (quick chore completion, earnings at a glance)
+5. Photo upload for profile pictures
+6. Icon pack customization
+7. Advanced settings (themes, sounds, etc.)
 
 ### Android App
 *Separate item for independent prioritization*
@@ -164,6 +181,11 @@ A full-stack multi-user chore tracking app for families with admin controls, ear
 2. Haptic feedback  
 3. Home screen widgets
 4. Wear OS integration
+5. Photo upload for profile pictures
+6. Icon pack customization
+7. Advanced settings (themes, sounds, etc.)
+
+**Note:** Photo profile pictures uploaded in native apps should sync to web app (web needs to support displaying images, not just emojis)
 
 ---
 
@@ -175,7 +197,18 @@ A full-stack multi-user chore tracking app for families with admin controls, ear
    - Update deprecated apple-mobile-web-app-capable meta tag
    - Replace with modern mobile-web-app-capable tag
 
-2. **Kiosk Mode / Family Dashboard**
+2. **Family Goals System**
+   - Shared family savings goals
+   - Everyone contributes to collective goals
+   - Track progress toward family rewards
+   - Goal achievement celebrations
+
+3. **Profile Picture Support**
+   - Display uploaded photos from native apps
+   - Support both emoji and image avatars
+   - Image storage and optimization
+
+4. **Kiosk Mode / Family Dashboard**
    - Always-on display mode
    - Family calendar integration
    - Shared announcements
@@ -205,7 +238,6 @@ A full-stack multi-user chore tracking app for families with admin controls, ear
 
 - [ ] Time filter dropdown alignment with cards below (mobile)
 - [ ] Chore edit requires page reload (should update live)
-- [ ] Consider if "Paid" amount on payout card should respect time filter or always show total paid
 
 ---
 
@@ -263,5 +295,5 @@ git push
 
 ---
 
-**Last Updated:** Current session
+**Last Updated:** 2025-10-12  
 **Version:** MVP in production, native apps and advanced features in planning
