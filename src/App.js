@@ -751,6 +751,9 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
   console.log('Current user ID:', currentUser.id);
   console.log('Is admin:', isAdmin);
   console.log('Filtered history:', paymentHistory.filter(payment => isAdmin || payment.userid === currentUser.id));
+  console.log('About to filter. First payment userId:', paymentHistory[0]?.userId);
+  console.log('Current user ID:', currentUser.id);
+  console.log('Are they equal?', paymentHistory[0]?.userId === currentUser.id);
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -853,28 +856,26 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
                 <p>No payment history</p>
               </div>
             ) : (
-              console.log('About to filter. First payment userId:', paymentHistory[0]?.userId);
-            console.log('Current user ID:', currentUser.id);
-            console.log('Are they equal?', paymentHistory[0]?.userId === currentUser.id);
-            paymentHistory
+
+              paymentHistory
                 .filter(payment => isAdmin || payment.user.id === currentUser.id)
                 .map((payment, idx) => (
-            <div key={idx} className="history-card">
-              <div
-                className="history-avatar"
-                style={{ background: payment.user.avatar_color }}
-              >
-                {payment.user.avatar_emoji}
-              </div>
-              <div className="history-info">
-                <div className="history-name">{payment.user.name}</div>
-                <div className="history-date">
-                  {new Date(payment.date).toLocaleDateString()}
-                </div>
-              </div>
-              <div className="history-amount">${payment.total.toFixed(2)}</div>
-            </div>
-            ))
+                  <div key={idx} className="history-card">
+                    <div
+                      className="history-avatar"
+                      style={{ background: payment.user.avatar_color }}
+                    >
+                      {payment.user.avatar_emoji}
+                    </div>
+                    <div className="history-info">
+                      <div className="history-name">{payment.user.name}</div>
+                      <div className="history-date">
+                        {new Date(payment.date).toLocaleDateString()}
+                      </div>
+                    </div>
+                    <div className="history-amount">${payment.total.toFixed(2)}</div>
+                  </div>
+                ))
             )}
           </div>
         </div>
