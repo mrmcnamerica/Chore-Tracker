@@ -184,6 +184,7 @@ const loadAllProfiles = async () => {
     currentUser={currentUser}
     userProfile={userProfile}
     onDeleteCompletion={deleteCompletion}
+    onOpenPayoutModal={() => setShowPayoutModal(true)}  // ADD THIS
   />
 )}
         {activeTab === 'profile' && (
@@ -369,7 +370,7 @@ function ChoresList({ chores, completions, onComplete, currentUser }) {
   );
 }
 
-function HistoryPage({ completions, currentUser, userProfile, onDeleteCompletion }) {
+function HistoryPage({ completions, currentUser, userProfile, onDeleteCompletion, onOpenPayoutModal }) {
   const [timeFilter, setTimeFilter] = useState('week');
   const [allProfiles, setAllProfiles] = useState([]);
   const [overviewIndex, setOverviewIndex] = useState(0);
