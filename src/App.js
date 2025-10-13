@@ -757,7 +757,7 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
                         console.log('Pay button clicked for user:', payout.user.name);
                         if (window.confirm(`Pay ${payout.user.name} $${payout.total.toFixed(2)}?`)) {
                           console.log('Confirmed, calling handlePayUser');
-                          handlePayUser(payout.userid);
+                          handlePayUser(payout.userId);
                         } else {
                           console.log('Payment cancelled');
                         }
