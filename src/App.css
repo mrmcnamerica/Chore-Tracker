@@ -54,7 +54,8 @@ body {
   justify-content: space-around;
   padding: 8px 0;
   padding-bottom: max(8px, env(safe-area-inset-bottom));
-  height: 64px;
+  height: auto;
+  min-height: 64px;
   position: relative;
 }
 
