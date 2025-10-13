@@ -1313,3 +1313,54 @@ body {
   letter-spacing: 0.05em;
   margin-bottom: 16px;
 }
+
+/* User Payment Summary */
+.payment-summary {
+  margin-bottom: 32px;
+}
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.summary-mini-card {
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 16px;
+  text-align: center;
+}
+
+.summary-mini-label {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.summary-mini-amount {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.summary-mini-card.pending .summary-mini-amount {
+  color: #ef4444;
+}
+
+.summary-mini-card.paid .summary-mini-amount {
+  color: #10b981;
+}
+
+.info-message {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 14px;
+  color: #1e40af;
+}
