@@ -17,86 +17,86 @@ export default function ChoreTrackerApp() {
   const [loading, setLoading] = useState(true);
   const [userProfile, setUserProfile] = useState(null);
   const [showPayoutModal, setShowPayoutModal] = useState(false);  // Payment Modal
-  const [allProfiles, setAllProfiles] = useState([]);              
+  const [allProfiles, setAllProfiles] = useState([]);
 
   // Check if user is logged in
   useEffect(() => {
-  // Set a timeout in case auth hangs
-  const timeout = setTimeout(() => {
-    console.log('Auth timeout, proceeding anyway');
-    setLoading(false);
-  }, 5000); // 5 second timeout
+    // Set a timeout in case auth hangs
+    const timeout = setTimeout(() => {
+      console.log('Auth timeout, proceeding anyway');
+      setLoading(false);
+    }, 5000); // 5 second timeout
 
-  supabase.auth.getSession()
-    .then(({ data: { session }, error }) => {
-      if (error) console.error('Auth error:', error);
+    supabase.auth.getSession()
+      .then(({ data: { session }, error }) => {
+        if (error) console.error('Auth error:', error);
+        setCurrentUser(session?.user ?? null);
+        setLoading(false);
+        clearTimeout(timeout);
+      })
+      .catch((err) => {
+        console.error('Auth failed:', err);
+        setLoading(false);
+        clearTimeout(timeout);
+      });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setCurrentUser(session?.user ?? null);
-      setLoading(false);
-      clearTimeout(timeout);
-    })
-    .catch((err) => {
-      console.error('Auth failed:', err);
-      setLoading(false);
-      clearTimeout(timeout);
     });
 
-  const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-    setCurrentUser(session?.user ?? null);
-  });
-
-  return () => {
-    subscription.unsubscribe();
-    clearTimeout(timeout);
-  };
-}, []);
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timeout);
+    };
+  }, []);
 
   // Load user profile, chores, and completions
-useEffect(() => {
-  if (currentUser) {
-    loadUserProfile();
-    loadChores();
-    loadCompletions();
-    loadAllProfiles();  // ADD THIS LINE
-  }
-}, [currentUser]);
+  useEffect(() => {
+    if (currentUser) {
+      loadUserProfile();
+      loadChores();
+      loadCompletions();
+      loadAllProfiles();  // ADD THIS LINE
+    }
+  }, [currentUser]);
 
-const loadUserProfile = async () => {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', currentUser.id)
-    .single();
-  
-  if (data) setUserProfile(data);
-};
-// ADD THIS FUNCTION
-const loadChores = async () => {
-  const { data, error } = await supabase
-    .from('chores')
-    .select('*')
-    .order('created_at', { ascending: false });
-  
-  if (data) setChores(data);
-};
+  const loadUserProfile = async () => {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', currentUser.id)
+      .single();
 
-const loadCompletions = async () => {
-  const { data, error } = await supabase
-    .from('completions')
-    .select('*, chores(name), profiles(name, avatar_emoji, avatar_color)')
-    .order('completed_at', { ascending: false });
-  
-  if (data) setCompletions(data);
-};
+    if (data) setUserProfile(data);
+  };
+  // ADD THIS FUNCTION
+  const loadChores = async () => {
+    const { data, error } = await supabase
+      .from('chores')
+      .select('*')
+      .order('created_at', { ascending: false });
 
-// ADD THIS NEW FUNCTION after loadUserProfile
-const loadAllProfiles = async () => {
-  const { data } = await supabase
-    .from('profiles')
-    .select('*')
-    .order('name');
-  
-  if (data) setAllProfiles(data);
-};
+    if (data) setChores(data);
+  };
+
+  const loadCompletions = async () => {
+    const { data, error } = await supabase
+      .from('completions')
+      .select('*, chores(name), profiles(name, avatar_emoji, avatar_color)')
+      .order('completed_at', { ascending: false });
+
+    if (data) setCompletions(data);
+  };
+
+  // ADD THIS NEW FUNCTION after loadUserProfile
+  const loadAllProfiles = async () => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('*')
+      .order('name');
+
+    if (data) setAllProfiles(data);
+  };
 
 
   const completeChore = async (chore) => {
@@ -115,15 +115,15 @@ const loadAllProfiles = async () => {
     }
   };
   const deleteCompletion = async (completionId) => {
-  const { error } = await supabase
-    .from('completions')
-    .delete()
-    .eq('id', completionId);
+    const { error } = await supabase
+      .from('completions')
+      .delete()
+      .eq('id', completionId);
 
-  if (!error) {
-    loadCompletions(); // Reload to show updated list
-  }
-};
+    if (!error) {
+      loadCompletions(); // Reload to show updated list
+    }
+  };
 
   const addChore = async (chore) => {
     const { data, error } = await supabase
@@ -155,43 +155,43 @@ const loadAllProfiles = async () => {
   }
 
   return (
-  <div className="app-container">
-    <div className="status-bar"></div>
-    
-    <div className="nav-bar">
-      {activeTab === 'chores' ? (
-        <h1>Hi, {userProfile?.name || 'there'}!</h1>
-      ) : (
-        <h1>
-          {activeTab === 'history' && 'History'}
-          {activeTab === 'profile' && 'Profile'}
-          {activeTab === 'admin' && 'Manage'}
-        </h1>
-      )}
-    </div>
+    <div className="app-container">
+      <div className="status-bar"></div>
+
+      <div className="nav-bar">
+        {activeTab === 'chores' ? (
+          <h1>Hi, {userProfile?.name || 'there'}!</h1>
+        ) : (
+          <h1>
+            {activeTab === 'history' && 'History'}
+            {activeTab === 'profile' && 'Profile'}
+            {activeTab === 'admin' && 'Manage'}
+          </h1>
+        )}
+      </div>
       <div className="content-area">
         {activeTab === 'chores' && (
-          <ChoresList 
-            chores={chores} 
+          <ChoresList
+            chores={chores}
             completions={completions}
             onComplete={completeChore}
             currentUser={currentUser}
           />
         )}
         {activeTab === 'history' && (
-  <HistoryPage 
-    completions={completions}
-    currentUser={currentUser}
-    userProfile={userProfile}
-    onDeleteCompletion={deleteCompletion}
-    onOpenPayoutModal={() => setShowPayoutModal(true)}  // ADD THIS
-  />
-)}
+          <HistoryPage
+            completions={completions}
+            currentUser={currentUser}
+            userProfile={userProfile}
+            onDeleteCompletion={deleteCompletion}
+            onOpenPayoutModal={() => setShowPayoutModal(true)}  // ADD THIS
+          />
+        )}
         {activeTab === 'profile' && (
           <ProfilePage user={currentUser} />
         )}
         {activeTab === 'admin' && (
-          <AdminPanel 
+          <AdminPanel
             chores={chores}
             onAddChore={addChore}
             onDeleteChore={deleteChore}
@@ -199,46 +199,46 @@ const loadAllProfiles = async () => {
         )}
       </div>
       <div className="tab-bar">
-    <TabButton 
-  icon="📋"
-  label="Chores"
-  active={activeTab === 'chores'}
-  onClick={() => changeTab('chores')}
-/>
-<TabButton 
-  icon="⏰"
-  label="History"
-  active={activeTab === 'history'}
-  onClick={() => changeTab('history')}
-/>
-<TabButton 
-  icon="👤"
-  label="Profile"
-  active={activeTab === 'profile'}
-  onClick={() => changeTab('profile')}
-/>
-{userProfile?.role === 'admin' && (
-  <TabButton 
-    icon="⚙️"
-    label="Manage"
-    active={activeTab === 'admin'}
-    onClick={() => changeTab('admin')}
-  />
-)}
+        <TabButton
+          icon="📋"
+          label="Chores"
+          active={activeTab === 'chores'}
+          onClick={() => changeTab('chores')}
+        />
+        <TabButton
+          icon="⏰"
+          label="History"
+          active={activeTab === 'history'}
+          onClick={() => changeTab('history')}
+        />
+        <TabButton
+          icon="👤"
+          label="Profile"
+          active={activeTab === 'profile'}
+          onClick={() => changeTab('profile')}
+        />
+        {userProfile?.role === 'admin' && (
+          <TabButton
+            icon="⚙️"
+            label="Manage"
+            active={activeTab === 'admin'}
+            onClick={() => changeTab('admin')}
+          />
+        )}
       </div>
-    
-    {showPayoutModal && (
-      <PayoutModal
-        isOpen={showPayoutModal}
-        onClose={() => setShowPayoutModal(false)}
-        currentUser={currentUser}
-        userProfile={userProfile}
-        completions={completions}
-        allProfiles={allProfiles}
-      />
-    )}
-  </div>  // ← This closes app-container
-);
+
+      {showPayoutModal && (
+        <PayoutModal
+          isOpen={showPayoutModal}
+          onClose={() => setShowPayoutModal(false)}
+          currentUser={currentUser}
+          userProfile={userProfile}
+          completions={completions}
+          allProfiles={allProfiles}
+        />
+      )}
+    </div>  // ← This closes app-container
+  );
 }
 
 function TabButton({ icon, label, active, onClick }) {
@@ -290,7 +290,7 @@ function LoginPage() {
               placeholder="your@email.com"
               onKeyPress={(e) => e.key === 'Enter' && handleSendLink()}
             />
-            
+
             <button onClick={handleSendLink} className="primary-button">
               Send Login Link
             </button>
@@ -322,7 +322,7 @@ function ChoresList({ chores, completions, onComplete, currentUser }) {
 
   const handleComplete = (chore) => {
     setCompletingId(chore.id);
-    
+
     setTimeout(() => {
       onComplete(chore);
       setCompletingId(null);
@@ -337,7 +337,7 @@ function ChoresList({ chores, completions, onComplete, currentUser }) {
       {chores.map(chore => {
         const status = getChoreStatus(chore);
         const isCompleted = status === 'completed';
-        
+
         return (
           <div key={chore.id} className={`chore-card ${isCompleted ? 'completed' : ''}`}>
             <div className="chore-info">
@@ -349,20 +349,19 @@ function ChoresList({ chores, completions, onComplete, currentUser }) {
               </div>
             </div>
             <button
-  onClick={() => handleComplete(chore)}
-  disabled={isCompleted || completingId === chore.id}
-  className={`complete-button ${
-    isCompleted 
-      ? 'disabled' 
-      : completingId === chore.id
-      ? 'completing'
-      : ''
-  }`}
->
-  {completingId === chore.id ? (
-    <span style={{ fontSize: '16px' }}>✓</span>
-  ) : isCompleted ? 'Done' : 'Complete'}
-</button>
+              onClick={() => handleComplete(chore)}
+              disabled={isCompleted || completingId === chore.id}
+              className={`complete-button ${isCompleted
+                  ? 'disabled'
+                  : completingId === chore.id
+                    ? 'completing'
+                    : ''
+                }`}
+            >
+              {completingId === chore.id ? (
+                <span style={{ fontSize: '16px' }}>✓</span>
+              ) : isCompleted ? 'Done' : 'Complete'}
+            </button>
           </div>
         );
       })}
@@ -375,40 +374,40 @@ function HistoryPage({ completions, currentUser, userProfile, onDeleteCompletion
   const [allProfiles, setAllProfiles] = useState([]);
   const [overviewIndex, setOverviewIndex] = useState(0);
   const [userIndex, setUserIndex] = useState(0);
-  
+
   const overviewRef = useRef(null);
   const userRef = useRef(null);
 
   const handleOverviewScroll = () => {
-  if (!overviewRef.current) return;
-  const scrollLeft = overviewRef.current.scrollLeft;
-  const cardWidth = overviewRef.current.scrollWidth / 2; // 2 cards total
-  const index = Math.round(scrollLeft / cardWidth);
-  setOverviewIndex(index);
-};
+    if (!overviewRef.current) return;
+    const scrollLeft = overviewRef.current.scrollLeft;
+    const cardWidth = overviewRef.current.scrollWidth / 2; // 2 cards total
+    const index = Math.round(scrollLeft / cardWidth);
+    setOverviewIndex(index);
+  };
 
-const handleUserScroll = () => {
-  if (!userRef.current) return;
-  const scrollLeft = userRef.current.scrollLeft;
-  const cardWidth = userRef.current.scrollWidth / allProfiles.length;
-  const index = Math.round(scrollLeft / cardWidth);
-  setUserIndex(index);
-};
+  const handleUserScroll = () => {
+    if (!userRef.current) return;
+    const scrollLeft = userRef.current.scrollLeft;
+    const cardWidth = userRef.current.scrollWidth / allProfiles.length;
+    const index = Math.round(scrollLeft / cardWidth);
+    setUserIndex(index);
+  };
 
-    // ... rest of your existing code continues here
+  // ... rest of your existing code continues here
   useEffect(() => {
-  loadAllProfiles();
-}, []);
+    loadAllProfiles();
+  }, []);
 
-const loadAllProfiles = async () => {
-  const { data } = await supabase
-    .from('profiles')
-    .select('*')
-    .neq('role', 'admin')
-    .order('name');
-  
-  if (data) setAllProfiles(data);
-};
+  const loadAllProfiles = async () => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('*')
+      .neq('role', 'admin')
+      .order('name');
+
+    if (data) setAllProfiles(data);
+  };
 
   // Filter completions by time period
   const getFilteredCompletions = () => {
@@ -443,8 +442,8 @@ const loadAllProfiles = async () => {
       <div className="history-page">
         {/* Time Filter */}
         <div className="time-filter">
-          <select 
-            value={timeFilter} 
+          <select
+            value={timeFilter}
             onChange={(e) => setTimeFilter(e.target.value)}
             className="time-filter-select"
           >
@@ -455,10 +454,10 @@ const loadAllProfiles = async () => {
           </select>
         </div>
 
-       {/* Top Carousel - Summary Cards */}
+        {/* Top Carousel - Summary Cards */}
         <h2 className="section-title">Overview</h2>
-        <div 
-          className="overview-carousel" 
+        <div
+          className="overview-carousel"
           ref={overviewRef}
           onScroll={handleOverviewScroll}
         >
@@ -478,15 +477,15 @@ const loadAllProfiles = async () => {
             <div className="summary-stats">
               <p className="summary-amount">${totalPaidOut.toFixed(2)}</p>
               <p className="summary-label">Total unpaid</p>
-              <button 
-  className="mark-paid-button"
-  onClick={() => {
-    console.log('Button clicked!');
-    onOpenPayoutModal();
-  }}
->
-  View/Send Payouts
-</button>
+              <button
+                className="mark-paid-button"
+                onClick={() => {
+                  console.log('Button clicked!');
+                  onOpenPayoutModal();
+                }}
+              >
+                View/Send Payouts
+              </button>
             </div>
           </div>
         </div>
@@ -494,8 +493,8 @@ const loadAllProfiles = async () => {
         {/* Dots for overview carousel */}
         <div className="carousel-dots">
           {[0, 1].map(i => (
-            <div 
-              key={i} 
+            <div
+              key={i}
               className={`dot ${overviewIndex === i ? 'active' : ''}`}
             />
           ))}
@@ -503,7 +502,7 @@ const loadAllProfiles = async () => {
 
         {/* Bottom Carousel - User Cards */}
         <h2 className="section-title">Individual Earnings</h2>
-        <div 
+        <div
           className="user-carousel"
           ref={userRef}
           onScroll={handleUserScroll}
@@ -511,10 +510,10 @@ const loadAllProfiles = async () => {
           {allProfiles.map(user => {
             const earnings = getUserEarnings(user.id);
             const choresCount = filteredCompletions.filter(c => c.user_id === user.id).length;
-            
+
             return (
               <div key={user.id} className="user-earnings-card">
-                <div 
+                <div
                   className="user-card-avatar"
                   style={{ background: user.avatar_color || '#3b82f6' }}
                 >
@@ -531,8 +530,8 @@ const loadAllProfiles = async () => {
         {/* Dots for user carousel */}
         <div className="carousel-dots">
           {allProfiles.map((_, i) => (
-            <div 
-              key={i} 
+            <div
+              key={i}
               className={`dot ${userIndex === i ? 'active' : ''}`}
             />
           ))}
@@ -547,8 +546,8 @@ const loadAllProfiles = async () => {
         ) : (
           filteredCompletions.map(completion => (
             <div key={completion.id} className="history-card">
-              <div 
-                className="history-avatar" 
+              <div
+                className="history-avatar"
                 style={{ background: completion.profiles?.avatar_color || '#3b82f6' }}
               >
                 {completion.profiles?.avatar_emoji || '😊'}
@@ -563,7 +562,7 @@ const loadAllProfiles = async () => {
                 </p>
               </div>
               <div className="history-amount">+${completion.amount_earned.toFixed(2)}</div>
-              
+
               <button
                 onClick={() => {
                   if (window.confirm('Delete this completion? This cannot be undone.')) {
@@ -604,8 +603,8 @@ const loadAllProfiles = async () => {
           .filter(c => c.user_id === currentUser.id)
           .map(completion => (
             <div key={completion.id} className="history-card">
-              <div 
-                className="history-avatar" 
+              <div
+                className="history-avatar"
                 style={{ background: completion.profiles?.avatar_color || '#3b82f6' }}
               >
                 {completion.profiles?.avatar_emoji || '😊'}
@@ -628,13 +627,13 @@ const loadAllProfiles = async () => {
 }
 function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, allProfiles }) {
   const [historyFilter, setHistoryFilter] = useState('all');
-  
+
   if (!isOpen) return null;
 
   // Calculate pending payouts per user
   const getPendingPayouts = () => {
     const userPayouts = {};
-    
+
     completions
       .filter(c => !c.paid_at) // Only unpaid completions
       .forEach(c => {
@@ -648,7 +647,7 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
         userPayouts[c.user_id].total += c.amount_earned;
         userPayouts[c.user_id].count += 1;
       });
-    
+
     return Object.values(userPayouts);
   };
 
@@ -675,7 +674,7 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
     paidCompletions.forEach(c => {
       const dateKey = new Date(c.paid_at).toLocaleDateString();
       const key = `${c.user_id}-${dateKey}`;
-      
+
       if (!grouped[key]) {
         grouped[key] = {
           user: c.profiles,
@@ -686,24 +685,34 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
       grouped[key].total += c.amount_earned;
     });
 
-    return Object.values(grouped).sort((a, b) => 
+    return Object.values(grouped).sort((a, b) =>
       new Date(b.date) - new Date(a.date)
     );
   };
 
   // Mark user's completions as paid
   const handlePayUser = async (userId) => {
+    console.log('Paying user:', userId);
+
     const unpaidCompletions = completions
       .filter(c => c.user_id === userId && !c.paid_at)
       .map(c => c.id);
 
-    const { error } = await supabase
+    console.log('Unpaid completion IDs:', unpaidCompletions);
+
+    const { data, error } = await supabase
       .from('completions')
       .update({ paid_at: new Date().toISOString() })
       .in('id', unpaidCompletions);
 
-    if (!error) {
-      window.location.reload(); // Quick refresh - we can improve this later
+    console.log('Update result:', { data, error });
+
+    if (error) {
+      console.error('Payment error:', error); // error logging
+      alert('Error processing payment: ' + error.message);
+    } else {
+      console.log('Payment successful, reloading...'); // success logging
+      window.location.reload();
     }
   };
 
@@ -724,7 +733,7 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
           {isAdmin && (
             <div className="pending-section">
               <div className="section-header">Pending Payouts</div>
-              
+
               {pendingPayouts.length === 0 ? (
                 <div className="empty-state">
                   <p>No pending payouts</p>
@@ -732,8 +741,8 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
               ) : (
                 pendingPayouts.map(payout => (
                   <div key={payout.user.id} className="user-payout-card">
-                    <div 
-                      className="payout-avatar" 
+                    <div
+                      className="payout-avatar"
                       style={{ background: payout.user.avatar_color }}
                     >
                       {payout.user.avatar_emoji}
@@ -742,7 +751,7 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
                       <div className="payout-name">{payout.user.name}</div>
                       <div className="payout-amount">${payout.total.toFixed(2)}</div>
                     </div>
-                    <button 
+                    <button
                       onClick={() => {
                         if (window.confirm(`Pay ${payout.user.name} $${payout.total.toFixed(2)}?`)) {
                           handlePayUser(payout.user.id);
@@ -761,10 +770,10 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
           {/* Payment History */}
           <div className="history-section">
             <div className="section-header">Payment History</div>
-            
+
             <div className="time-filter">
-              <select 
-                value={historyFilter} 
+              <select
+                value={historyFilter}
                 onChange={(e) => setHistoryFilter(e.target.value)}
                 className="time-filter-select"
               >
@@ -783,8 +792,8 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
                 .filter(payment => isAdmin || payment.user.id === currentUser.id)
                 .map((payment, idx) => (
                   <div key={idx} className="history-card">
-                    <div 
-                      className="history-avatar" 
+                    <div
+                      className="history-avatar"
                       style={{ background: payment.user.avatar_color }}
                     >
                       {payment.user.avatar_emoji}
@@ -822,7 +831,7 @@ function ProfilePage({ user }) {
       .select('*')
       .eq('id', user.id)
       .single();
-    
+
     if (data) {
       setProfile(data);
       setEditedProfile(data);
@@ -832,7 +841,7 @@ function ProfilePage({ user }) {
   const handleSaveProfile = async () => {
     const { error } = await supabase
       .from('profiles')
-      .update({ 
+      .update({
         name: editedProfile.name,
         avatar_emoji: editedProfile.avatar_emoji,
         avatar_color: editedProfile.avatar_color
@@ -854,13 +863,13 @@ function ProfilePage({ user }) {
   return (
     <div className="profile-page">
       <div className="profile-card">
-        <div 
-          className="profile-avatar" 
+        <div
+          className="profile-avatar"
           style={{ background: profile.avatar_color }}
         >
           {profile.avatar_emoji}
         </div>
-        
+
         <div className="profile-info">
           <h2>{profile.name}</h2>
           <p className="profile-email">{user.email}</p>
@@ -875,7 +884,7 @@ function ProfilePage({ user }) {
           <div className="avatar-picker">
             <h3>Edit Profile</h3>
             <p className="picker-subtitle">Customize your name and avatar</p>
-            
+
             <div className="avatar-preview" style={{ background: editedProfile.avatar_color }}>
               {editedProfile.avatar_emoji}
             </div>
@@ -891,44 +900,44 @@ function ProfilePage({ user }) {
                 />
               </label>
 
-<label>
-    <span>Emoji</span>
-    <div className="emoji-quick-picks">
-      {['😎', '🤓', '🥳', '👸', '👽', '🤖', '💩', '🦸', '🧑‍🚀', '🐶', '🐱'].map(emoji => (
-        <button
-          key={emoji}
-          type="button"
-          onClick={() => {
-            setEditedProfile({ ...editedProfile, avatar_emoji: emoji });
-            setShowCustomEmoji(false);
-          }}
-          className="quick-emoji-btn"
-        >
-          {emoji}
-        </button>
-      ))}
-      <button
-        type="button"
-        onClick={() => setShowCustomEmoji(!showCustomEmoji)}
-        className="quick-emoji-btn custom-emoji-btn"
-      >
-        ➕
-      </button>
-    </div>
-    {showCustomEmoji && (
-      <div className="custom-emoji-section">
-        <p className="custom-emoji-label">Choose your own emoji:</p>
-        <input
-          type="text"
-          value={editedProfile.avatar_emoji}
-          onChange={(e) => setEditedProfile({ ...editedProfile, avatar_emoji: e.target.value.slice(0, 2) })}
-          placeholder="Tap to type"
-          className="emoji-input"
-          maxLength="2"
-        />
-      </div>
-    )}
-  </label>
+              <label>
+                <span>Emoji</span>
+                <div className="emoji-quick-picks">
+                  {['😎', '🤓', '🥳', '👸', '👽', '🤖', '💩', '🦸', '🧑‍🚀', '🐶', '🐱'].map(emoji => (
+                    <button
+                      key={emoji}
+                      type="button"
+                      onClick={() => {
+                        setEditedProfile({ ...editedProfile, avatar_emoji: emoji });
+                        setShowCustomEmoji(false);
+                      }}
+                      className="quick-emoji-btn"
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setShowCustomEmoji(!showCustomEmoji)}
+                    className="quick-emoji-btn custom-emoji-btn"
+                  >
+                    ➕
+                  </button>
+                </div>
+                {showCustomEmoji && (
+                  <div className="custom-emoji-section">
+                    <p className="custom-emoji-label">Choose your own emoji:</p>
+                    <input
+                      type="text"
+                      value={editedProfile.avatar_emoji}
+                      onChange={(e) => setEditedProfile({ ...editedProfile, avatar_emoji: e.target.value.slice(0, 2) })}
+                      placeholder="Tap to type"
+                      className="emoji-input"
+                      maxLength="2"
+                    />
+                  </div>
+                )}
+              </label>
 
               <label>
                 <span>Background Color</span>
@@ -942,17 +951,17 @@ function ProfilePage({ user }) {
             </div>
 
             <div className="picker-buttons">
-              <button 
-                onClick={handleSaveProfile} 
+              <button
+                onClick={handleSaveProfile}
                 className="save-button"
               >
                 Save Changes
               </button>
-              <button 
+              <button
                 onClick={() => {
                   setIsEditing(false);
                   setEditedProfile(profile);
-                }} 
+                }}
                 className="cancel-button"
               >
                 Cancel
@@ -972,15 +981,15 @@ function ProfilePage({ user }) {
 function AdminPanel({ chores, onAddChore, onDeleteChore }) {
   const [showForm, setShowForm] = useState(false);
   const [editingChore, setEditingChore] = useState(null);
-const [choreForm, setChoreForm] = useState({
-  name: '',
-  description: '',
-  value: '',
-  is_recurring: true,
-  can_repeat: false,
-  reset_frequency: 'weekly',
-  reset_day: 1  // Default to Monday
-});
+  const [choreForm, setChoreForm] = useState({
+    name: '',
+    description: '',
+    value: '',
+    is_recurring: true,
+    can_repeat: false,
+    reset_frequency: 'weekly',
+    reset_day: 1  // Default to Monday
+  });
 
   const resetForm = () => {
     setChoreForm({
@@ -1007,9 +1016,9 @@ const [choreForm, setChoreForm] = useState({
             description: choreForm.description,
             value: parseFloat(choreForm.value),
             is_recurring: choreForm.is_recurring,
-can_repeat: choreForm.can_repeat,
-reset_frequency: choreForm.reset_frequency,
-reset_day: choreForm.reset_day,
+            can_repeat: choreForm.can_repeat,
+            reset_frequency: choreForm.reset_frequency,
+            reset_day: choreForm.reset_day,
           })
           .eq('id', editingChore.id);
 
@@ -1058,27 +1067,27 @@ reset_day: choreForm.reset_day,
             type="text"
             placeholder="Chore name"
             value={choreForm.name}
-            onChange={(e) => setChoreForm({...choreForm, name: e.target.value})}
+            onChange={(e) => setChoreForm({ ...choreForm, name: e.target.value })}
           />
           <input
             type="text"
             placeholder="Description (optional)"
             value={choreForm.description}
-            onChange={(e) => setChoreForm({...choreForm, description: e.target.value})}
+            onChange={(e) => setChoreForm({ ...choreForm, description: e.target.value })}
           />
           <input
             type="number"
             step="0.01"
             placeholder="Value ($)"
             value={choreForm.value}
-            onChange={(e) => setChoreForm({...choreForm, value: e.target.value})}
+            onChange={(e) => setChoreForm({ ...choreForm, value: e.target.value })}
           />
 
           <label className="checkbox-label">
             <input
               type="checkbox"
               checked={choreForm.is_recurring}
-              onChange={(e) => setChoreForm({...choreForm, is_recurring: e.target.checked})}
+              onChange={(e) => setChoreForm({ ...choreForm, is_recurring: e.target.checked })}
             />
             <span>Recurring</span>
           </label>
@@ -1089,7 +1098,7 @@ reset_day: choreForm.reset_day,
                 <span>Frequency:</span>
                 <select
                   value={choreForm.reset_frequency}
-                  onChange={(e) => setChoreForm({...choreForm, reset_frequency: e.target.value})}
+                  onChange={(e) => setChoreForm({ ...choreForm, reset_frequency: e.target.value })}
                   className="reset-day-select"
                 >
                   <option value="daily">Daily</option>
@@ -1103,7 +1112,7 @@ reset_day: choreForm.reset_day,
                   <span>Resets every:</span>
                   <select
                     value={choreForm.reset_day || 1}
-                    onChange={(e) => setChoreForm({...choreForm, reset_day: parseInt(e.target.value)})}
+                    onChange={(e) => setChoreForm({ ...choreForm, reset_day: parseInt(e.target.value) })}
                     className="reset-day-select"
                   >
                     <option value="0">Sunday</option>
@@ -1125,7 +1134,7 @@ reset_day: choreForm.reset_day,
                     min="1"
                     max="31"
                     value={choreForm.reset_day || 1}
-                    onChange={(e) => setChoreForm({...choreForm, reset_day: parseInt(e.target.value)})}
+                    onChange={(e) => setChoreForm({ ...choreForm, reset_day: parseInt(e.target.value) })}
                     className="reset-day-select"
                   />
                 </label>
@@ -1134,12 +1143,12 @@ reset_day: choreForm.reset_day,
           )}
 
           <label className="checkbox-label">
-  <input
-    type="checkbox"
-    checked={choreForm.can_repeat}
-    onChange={(e) => setChoreForm({...choreForm, can_repeat: e.target.checked})}
-  />
- 
+            <input
+              type="checkbox"
+              checked={choreForm.can_repeat}
+              onChange={(e) => setChoreForm({ ...choreForm, can_repeat: e.target.checked })}
+            />
+
             <span>Can be done multiple times</span>
           </label>
 
