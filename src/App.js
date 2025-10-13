@@ -235,6 +235,7 @@ export default function ChoreTrackerApp() {
           userProfile={userProfile}
           completions={completions}
           allProfiles={allProfiles}
+          onPaymentComplete={loadCompletions}  // ADD THIS
         />
       )}
     </div>  // ← This closes app-container
@@ -467,7 +468,7 @@ function HistoryPage({ completions, currentUser, userProfile, onDeleteCompletion
             <div className="summary-stats">
               <p>{allProfiles.length} active members</p>
               <p>{filteredCompletions.length} chores completed</p>
-              <p className="summary-amount">${totalPaidOut.toFixed(2)} earned</p>
+              <p className="summary-amount">${filteredCompletions.filter(c => !c.paid_at).reduce((sum, c) => sum + c.amount_earned, 0).toFixed(2)} earned</p>
             </div>
           </div>
 
@@ -625,7 +626,7 @@ function HistoryPage({ completions, currentUser, userProfile, onDeleteCompletion
     </div>
   );
 }
-function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, allProfiles }) {
+function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, allProfiles, onPaymentComplete }) {
   const [historyFilter, setHistoryFilter] = useState('all');
 
   if (!isOpen) return null;
@@ -709,11 +710,12 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
     console.log('Update result:', { data, error });
 
     if (error) {
-      console.error('Payment error:', error); // error logging
+      console.error('Payment error:', error);
       alert('Error processing payment: ' + error.message);
     } else {
-      console.log('Payment successful, reloading...'); // success logging
-      window.location.reload();
+      console.log('Payment successful, reloading data...');
+      await onPaymentComplete();  // Reload completions
+      // Modal stays open!
     }
   };
 
