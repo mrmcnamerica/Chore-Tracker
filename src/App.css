@@ -52,10 +52,10 @@ body {
   border-radius: 20px 20px 0 0;
   display: flex;
   justify-content: space-around;
-  padding: 8px 0;
+  padding: 6px 0;
   padding-bottom: max(8px, env(safe-area-inset-bottom));
   height: auto;
-  min-height: 64px;
+  min-height: 56px;
 }
 
 .tab-indicator {
