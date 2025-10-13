@@ -639,6 +639,7 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
       .forEach(c => {
         if (!userPayouts[c.user_id]) {
           userPayouts[c.user_id] = {
+            userId: c.user_id,
             user: c.profiles,
             total: 0,
             count: 0
@@ -756,7 +757,7 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
                         console.log('Pay button clicked for user:', payout.user.name);
                         if (window.confirm(`Pay ${payout.user.name} $${payout.total.toFixed(2)}?`)) {
                           console.log('Confirmed, calling handlePayUser');
-                          handlePayUser(payout.user.id);
+                          handlePayUser(payout.userid);
                         } else {
                           console.log('Payment cancelled');
                         }
