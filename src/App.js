@@ -851,7 +851,7 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
               </select>
             </div>
 
-            Histor{paymenty.length === 0 ? (
+            {paymentHistory.length === 0 ? (
               <div className="empty-state">
                 <p>No payment history</p>
               </div>
