@@ -42,6 +42,39 @@ body {
   padding-bottom: 80px;
 }
 
+/* ANIMATIONS */
+.content-area.slide-left {
+  animation: slideInFromRight 0.3s ease-out;
+}
+
+.content-area.slide-right {
+  animation: slideInFromLeft 0.3s ease-out;
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .tab-bar {
   position: fixed;
   bottom: 0;

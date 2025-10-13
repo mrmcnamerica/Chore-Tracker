@@ -8,7 +8,18 @@ export default function ChoreTrackerApp() {
   const [activeTab, setActiveTab] = useState(
     localStorage.getItem('activeTab') || 'chores'
   );
+  const [slideDirection, setSlideDirection] = useState('none');
   const changeTab = (tab) => {
+    const tabs = ['chores', 'history', 'profile', 'admin'];
+    const currentIndex = tabs.indexOf(activeTab);
+    const newIndex = tabs.indexOf(tab);
+
+    if (newIndex > currentIndex) {
+      setSlideDirection('left'); // Sliding to a tab on the right
+    } else if (newIndex < currentIndex) {
+      setSlideDirection('right'); // Sliding to a tab on the left
+    }
+
     setActiveTab(tab);
     localStorage.setItem('activeTab', tab);
   };
@@ -188,7 +199,7 @@ export default function ChoreTrackerApp() {
           </h1>
         )}
       </div>
-      <div className="content-area">
+      <div className={`content-area slide-${slideDirection}`}>
         {activeTab === 'chores' && (
           <ChoresList
             chores={chores}

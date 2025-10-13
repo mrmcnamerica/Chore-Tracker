@@ -150,10 +150,27 @@ A full-stack multi-user chore tracking app for families with admin controls, ear
    - System preference detection
 
 8. **Enhanced Animations**
-   - More interaction feedback
-   - Page transitions (swipe-style animations between tabs)
-   - Loading states
-   - Smooth micro-interactions
+   
+   **Quick Wins (~30 mins each):**
+   - ✅ Tab bar indicator slide - Blue bar smoothly moves between tabs (COMPLETED)
+   - Page slide transitions - Content slides left/right when changing tabs
+   - Button press animations - Scale down slightly on tap
+   - Card tap feedback - Subtle scale/shadow on earnings card tap
+   - Number counter animations - Earnings amount counts up smoothly
+   - Filter dropdown smooth open - Dropdown expands smoothly
+   
+   **Medium Effort (~1 hour each):**
+   - Modal fade in/slide up - Payment modal animates in from bottom or fades
+   - Pay button ripple effect - Material-style ripple on click
+   - Card entrance animations - Chore cards fade in + slide up when page loads
+   - List stagger - History items appear one after another (staggered)
+   - Avatar color transitions - Color changes fade smoothly in profile editor
+   
+   **Bigger Projects (2+ hours):**
+   - Skeleton screens - Loading placeholders instead of blank page
+   - Payment success confetti - Celebration when paying someone
+   - Goal reached animation - Special effect when hitting a goal
+   - Completion celebration - Extra polish on chore complete
 
 9. **Responsive Sizing Improvements**
    - Better tablet layouts
@@ -210,9 +227,13 @@ A full-stack multi-user chore tracking app for families with admin controls, ear
 
 4. **Kiosk Mode / Family Dashboard**
    - Always-on display mode
+   - New "kiosk" user role in database (not admin, not regular user)
+   - Generic/no personal greeting on pages
+   - Read-only or limited interactions
    - Family calendar integration
    - Shared announcements
    - Large touchscreen optimization
+   - Focus on displaying family stats/overview
 
 2. **Grocery Lists**
    - Shared shopping lists
@@ -295,5 +316,5 @@ git push
 
 ---
 
-**Last Updated:** 2025-10-12  
+**Last Updated:** 2025-10-13  
 **Version:** MVP in production, native apps and advanced features in planning
