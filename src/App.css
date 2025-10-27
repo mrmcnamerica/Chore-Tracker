@@ -1616,6 +1616,7 @@ body {
     /* Fully rounded */
     border: 1px solid var(--border-primary);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
   }
 
   /* Add some breathing room for content above floating bar */
