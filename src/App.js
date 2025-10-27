@@ -13,6 +13,7 @@ export default function ChoreTrackerApp() {
     const tabs = ['chores', 'history', 'profile', 'admin'];
     const currentIndex = tabs.indexOf(activeTab);
     const newIndex = tabs.indexOf(tab);
+    const [theme, setTheme] = useState('system'); // 'system', 'light', or 'dark'
 
     if (newIndex > currentIndex) {
       setSlideDirection('left'); // Sliding to a tab on the right
@@ -30,6 +31,19 @@ export default function ChoreTrackerApp() {
       const { offsetLeft, offsetWidth } = tabElement;
       setIndicatorStyle({ left: offsetLeft, width: offsetWidth });
     }
+  };
+  // Detect and apply theme
+  const getEffectiveTheme = (preference) => {
+    if (preference === 'system') {
+      // Check system preference
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    return preference;
+  };
+
+  const applyTheme = (themePreference) => {
+    const effectiveTheme = getEffectiveTheme(themePreference);
+    document.documentElement.setAttribute('data-theme', effectiveTheme);
   };
   useEffect(() => {
     updateIndicator(activeTab);
@@ -89,6 +103,18 @@ export default function ChoreTrackerApp() {
       loadAllProfiles();  // ADD THIS LINE
     }
   }, [currentUser]);
+  // Apply theme whenever it changes
+  useEffect(() => {
+    applyTheme(theme);
+
+    // Listen for system theme changes if user is on 'system'
+    if (theme === 'system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handleChange = () => applyTheme('system');
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    }
+  }, [theme]);
 
   const loadUserProfile = async () => {
     const { data, error } = await supabase
@@ -97,9 +123,11 @@ export default function ChoreTrackerApp() {
       .eq('id', currentUser.id)
       .single();
 
-    if (data) setUserProfile(data);
+    if (data) {
+      setUserProfile(data);
+      setTheme(data.theme_preference || 'system'); // Load theme preference
+    }
   };
-  // ADD THIS FUNCTION
   const loadChores = async () => {
     const { data, error } = await supabase
       .from('chores')
@@ -118,7 +146,6 @@ export default function ChoreTrackerApp() {
     if (data) setCompletions(data);
   };
 
-  // ADD THIS NEW FUNCTION after loadUserProfile
   const loadAllProfiles = async () => {
     const { data } = await supabase
       .from('profiles')
@@ -218,7 +245,11 @@ export default function ChoreTrackerApp() {
           />
         )}
         {activeTab === 'profile' && (
-          <ProfilePage user={currentUser} />
+          <ProfilePage
+            user={currentUser}
+            theme={theme}
+            onThemeChange={setTheme}
+          />
         )}
         {activeTab === 'admin' && (
           <AdminPanel
@@ -925,7 +956,7 @@ function PayoutModal({ isOpen, onClose, currentUser, userProfile, completions, a
   );
 }
 
-function ProfilePage({ user }) {
+function ProfilePage({ user, theme, onThemeChange }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedProfile, setEditedProfile] = useState(null);
   const [profile, setProfile] = useState(null);
@@ -961,6 +992,19 @@ function ProfilePage({ user }) {
     if (!error) {
       setProfile(editedProfile);
       setIsEditing(false);
+    }
+  };
+  const handleThemeChange = async (newTheme) => {
+    onThemeChange(newTheme); // Update local state immediately
+
+    // Save to database
+    const { error } = await supabase
+      .from('profiles')
+      .update({ theme_preference: newTheme })
+      .eq('id', user.id);
+
+    if (error) {
+      console.error('Error saving theme:', error);
     }
   };
 
@@ -1079,7 +1123,32 @@ function ProfilePage({ user }) {
             </div>
           </div>
         </div>
+
       )}
+
+      <div className="theme-selector-card">
+        <h3>Theme</h3>
+        <div className="theme-options">
+          <button
+            onClick={() => handleThemeChange('light')}
+            className={`theme-option ${theme === 'light' ? 'active' : ''}`}
+          >
+            ☀️ Light
+          </button>
+          <button
+            onClick={() => handleThemeChange('dark')}
+            className={`theme-option ${theme === 'dark' ? 'active' : ''}`}
+          >
+            🌙 Dark
+          </button>
+          <button
+            onClick={() => handleThemeChange('system')}
+            className={`theme-option ${theme === 'system' ? 'active' : ''}`}
+          >
+            💻 Auto
+          </button>
+        </div>
+      </div>
 
       <button onClick={handleLogout} className="logout-button">
         Logout

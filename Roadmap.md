@@ -98,9 +98,126 @@ A full-stack multi-user chore tracking app for families with admin controls, ear
 
 ---
 
-## MVP Web App 🎯
+## Web App Final Touches 🌐
 
-**Priority features for web version:**
+**Web app will be mostly retired once iOS native ships. These final improvements support current users:**
+
+### Phase 1: Dark Mode 🌙
+**Time estimate: 2 hours**
+- Auto-detect system preference (`prefers-color-scheme`)
+- Manual toggle in Profile page (overrides system)
+- Save preference to Supabase `profiles` table
+  - Add `theme_preference` column: `'system'`, `'light'`, `'dark'` (default: `'system'`)
+- CSS variables for all colors
+- Smooth fade transition between modes
+- Respects system changes if user hasn't manually overridden
+
+### Phase 2: Responsive Design 📱→💻
+**Time estimate: 2-3 hours**
+- Improve iPad experience
+- Better desktop/browser layouts
+- Optimize card sizing and spacing for larger screens
+- Keep mobile-first approach but enhance tablet/desktop views
+- Better use of screen real estate on wide displays
+
+**After these updates, web app development pauses. Focus shifts to iOS native.**
+
+---
+
+## iOS Native App 🍎
+
+**Primary user experience for Jackson & Vivi (both iOS users). Android user (parent) continues using web app.**
+
+### Core Features (Port from Web)
+- Magic link authentication (or transition to native auth)
+- Chore management (create/edit/delete)
+- Complete chores
+- Track earnings
+- Payment tracking & history
+- Role-based views (admin vs user)
+
+### iOS Native Features & Polish
+**Visual Design (NEW - not in web):**
+- Modern iOS design language
+- Light/neutral color palette
+- Gradient cards (Family/Payouts)
+- User cards with saturated avatar colors
+- Colored left borders on history items
+- Neutral tab indicator (gray/blue-gray)
+- Glassmorphism effects
+
+**Animations:**
+- Card tap feedback
+- Number counter animations
+- Smooth transitions
+- Button press feedback
+- Modal slide-ups
+- List stagger effects
+- Tab transitions
+
+**iOS-Specific:**
+- Push notifications (chore reminders, payment alerts)
+- Haptic feedback
+- Widgets (earnings summary, pending chores)
+- Apple Watch app (optional - quick chore completion)
+- Native photo picker for profile pictures
+- Share sheet integration
+- Proper iOS navigation patterns
+
+### Major Features (Build Native-First)
+**Home Tab & Goals System:**
+- Replace History tab with Home tab
+- Role-aware home screen:
+  - **Regular users:** Goal card, earnings summary, recent activity
+  - **Admins:** Family dashboard with stats
+- Goals system:
+  - One active goal per user
+  - Progress visualization
+  - Earnings graph (30 days)
+  - Projected completion date
+  - Goal completion celebration
+- "View All" link to full history
+
+**Enhanced Navigation:**
+- Home: Dashboard view (role-aware)
+- Chores: Available chores only
+- Profile: User settings
+- Manage: Admin control center (admins only)
+
+---
+
+## Phase 3: Major Refactor - Home Tab & Goals System 🏗️
+**MOVED TO iOS NATIVE - Build once, build right**
+**Time estimate: 8-10 hours | Risk: High**
+
+**3a. Restructure Navigation:**
+- Add Home tab, remove History from navigation
+- Home tab is role-aware:
+  - **Regular users:** Goals card, earnings summary, recent activity (top 3), "View All" link
+  - **Admins:** Family dashboard (current History page with colored cards)
+- Chores tab: Available chores list only
+- Profile tab: User settings
+- Manage tab: Admin control center
+
+**3b. Goals System:**
+- Database: Add `goals` table (user_id, name, icon, target_amount, created_at)
+- One active goal per user at a time
+- Goal card on user Home page
+- Goal detail modal with:
+  - Progress visualization
+  - Earnings graph (last 30 days)
+  - Projected completion date
+  - Edit button
+- Goal creation/edit flow
+- Goal completion celebration
+
+**3c. Distributed Admin Controls:**
+- Chores page: Add/edit/delete chores (swipe actions + FAB)
+- Home page: Tap user card → Modal with their history + edit/delete completions
+- Manage tab: Unified admin view for power users
+
+### Phase 4: Remaining MVP Features
+(After restructure is complete)
 
 1. ✅ **Payment Tracking (COMPLETED)**
    - Modal popup for payments
@@ -154,7 +271,7 @@ A full-stack multi-user chore tracking app for families with admin controls, ear
    **Quick Wins (~30 mins each):**
    - ✅ Tab bar indicator slide - Blue bar smoothly moves between tabs (COMPLETED)
    - ✅ Page slide transitions - Content slides left/right when changing tabs (COMPLETED)
-   - Button press animations - Scale down slightly on tap
+   - ✅ Button press animations - Scale down slightly on tap (COMPLETED)
    - Card tap feedback - Subtle scale/shadow on earnings card tap
    - Number counter animations - Earnings amount counts up smoothly
    - Filter dropdown smooth open - Dropdown expands smoothly
@@ -235,19 +352,19 @@ A full-stack multi-user chore tracking app for families with admin controls, ear
    - Large touchscreen optimization
    - Focus on displaying family stats/overview
 
-2. **Grocery Lists**
+5. **Grocery Lists**
    - Shared shopping lists
    - Category organization
    - Check-off items
    - Add items from any device
 
-3. **Notes/Memos**
+6. **Notes/Memos**
    - Family message board
    - Per-user notes
    - Shared reminders
    - Sticky note style UI
 
-4. **Whiteboard**
+7. **Whiteboard**
    - Digital family whiteboard
    - Drawing/sketching capability
    - Photo uploads
@@ -316,5 +433,5 @@ git push
 
 ---
 
-**Last Updated:** 2025-10-13  
-**Version:** MVP in production, native apps and advanced features in planning
+**Last Updated:** 2025-10-13 
+**Version:** MVP in production, phased refactor planned
