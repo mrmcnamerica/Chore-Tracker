@@ -9,11 +9,12 @@ export default function ChoreTrackerApp() {
     localStorage.getItem('activeTab') || 'chores'
   );
   const [slideDirection, setSlideDirection] = useState('none');
+  const [theme, setTheme] = useState('system'); // 'system', 'light', or 'dark'
   const changeTab = (tab) => {
     const tabs = ['chores', 'history', 'profile', 'admin'];
     const currentIndex = tabs.indexOf(activeTab);
     const newIndex = tabs.indexOf(tab);
-    const [theme, setTheme] = useState('system'); // 'system', 'light', or 'dark'
+
 
     if (newIndex > currentIndex) {
       setSlideDirection('left'); // Sliding to a tab on the right
@@ -24,18 +25,8 @@ export default function ChoreTrackerApp() {
     setActiveTab(tab);
     localStorage.setItem('activeTab', tab);
   };
-  // Finds tab buton by name and updates indicator state
-  const updateIndicator = (tabName) => {
-    const tabElement = tabRefs.current[tabName];
-    if (tabElement) {
-      const { offsetLeft, offsetWidth } = tabElement;
-      setIndicatorStyle({ left: offsetLeft, width: offsetWidth });
-    }
-  };
-  // Detect and apply theme
   const getEffectiveTheme = (preference) => {
     if (preference === 'system') {
-      // Check system preference
       return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
     return preference;
@@ -45,6 +36,15 @@ export default function ChoreTrackerApp() {
     const effectiveTheme = getEffectiveTheme(themePreference);
     document.documentElement.setAttribute('data-theme', effectiveTheme);
   };
+  // Finds tab buton by name and updates indicator state
+  const updateIndicator = (tabName) => {
+    const tabElement = tabRefs.current[tabName];
+    if (tabElement) {
+      const { offsetLeft, offsetWidth } = tabElement;
+      setIndicatorStyle({ left: offsetLeft, width: offsetWidth });
+    }
+  };
+
   useEffect(() => {
     updateIndicator(activeTab);
   }, [activeTab]);
