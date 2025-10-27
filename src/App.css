@@ -1594,3 +1594,32 @@ body {
 .theme-option.active:hover {
   background: var(--accent-blue-hover);
 }
+
+/* ============================================
+   RESPONSIVE: Floating Tab Bar (Tablet+)
+   ============================================ */
+
+@media (min-width: 768px) {
+  .tab-bar {
+    position: fixed;
+    bottom: 20px;
+    /* Lift from bottom */
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    /* Center horizontally */
+    width: 500px;
+    /* Fixed width */
+    max-width: calc(100vw - 40px);
+    /* Safety margin on smaller tablets */
+    border-radius: 24px;
+    /* Fully rounded */
+    border: 1px solid var(--border-primary);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Add some breathing room for content above floating bar */
+  .content-area {
+    padding-bottom: 120px;
+  }
+}
